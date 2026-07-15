@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Политика конфиденциальности | Агентство недвижимости</title>
+    <style>
+        :root {
+            --bg: #060606;
+            --card: #0f0f0f;
+            --card-alt: #141414;
+            --text: #e0e0e0;
+            --text-light: #a0a0a0;
+            --text-lighter: #6e6e6e;
+            --gold: #c9a96e;
+            --gold-dark: #a68a56;
+            --gold-light: #d4b87a;
+            --gold-pale: rgba(201, 169, 110, 0.06);
+            --gold-border: rgba(201, 169, 110, 0.18);
+            --border: #1c1c1c;
+            --border-light: #222;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            --radius: 16px;
+            --radius-lg: 22px;
+            --transition: 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* ====== ДЕКОРАТИВНЫЙ ФОН ====== */
+        .bg-decoration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .bg-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(160px);
+            opacity: 0.03;
+        }
+        .bg-orb:nth-child(1) {
+            width: 800px;
+            height: 800px;
+            background: var(--gold);
+            top: -30%;
+            right: -25%;
+        }
+        .bg-orb:nth-child(2) {
+            width: 600px;
+            height: 600px;
+            background: var(--gold-dark);
+            bottom: -20%;
+            left: -20%;
+            opacity: 0.025;
+        }
+
+        /* ====== ШАПКА ====== */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(6, 6, 6, 0.88);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid var(--border);
+            transition: all var(--transition);
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1;
+        }
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .logo {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--text);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: -0.3px;
+        }
+        .logo span {
+            color: var(--gold);
+        }
+        .logo-dot {
+            width: 8px;
+            height: 8px;
+            background: #27ae60;
+            border-radius: 50%;
+            animation: pulse 2.5s infinite;
+            display: inline-block;
+            margin-left: 2px;
+        }
+        @keyframes pulse {
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(39, 174, 96, 0.5);
+            }
+            50% {
+                box-shadow: 0 0 0 14px rgba(39, 174, 96, 0);
+            }
+        }
+        .nav-links {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1.5px solid var(--border-light);
+            padding: 9px 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all var(--transition);
+            color: var(--text-light);
+            white-space: nowrap;
+            font-family: inherit;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-outline:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(201, 169, 110, 0.12);
+        }
+
+        /* ====== ОСНОВНОЙ КОНТЕНТ ====== */
+        main {
+            padding: 40px 20px 80px;
+            position: relative;
+            z-index: 1;
+        }
+        .policy-card {
+            background: var(--card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: 40px 35px;
+            box-shadow: var(--shadow);
+        }
+        .policy-header {
+            text-align: center;
+            margin-bottom: 35px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid var(--border);
+        }
+        .policy-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--gold-pale);
+            border: 1px solid var(--gold-border);
+            padding: 7px 18px;
+            border-radius: 30px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--gold);
+            margin-bottom: 16px;
+            letter-spacing: 0.4px;
+        }
+        .policy-title {
+            font-size: 2.4rem;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 6px;
+            letter-spacing: -0.5px;
+        }
+        .policy-title span {
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold-dark) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .policy-date {
+            color: var(--text-lighter);
+            font-size: 0.85rem;
+        }
+
+        /* ====== ТЕКСТ ПОЛИТИКИ ====== */
+        .policy-content h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--gold);
+            margin: 30px 0 12px;
+            letter-spacing: -0.2px;
+        }
+        .policy-content h2:first-of-type {
+            margin-top: 0;
+        }
+        .policy-content p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            margin-bottom: 14px;
+            line-height: 1.75;
+        }
+        .policy-content ul {
+            list-style: none;
+            padding-left: 0;
+            margin-bottom: 16px;
+        }
+        .policy-content ul li {
+            position: relative;
+            padding-left: 22px;
+            color: var(--text-light);
+            font-size: 0.93rem;
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+        .policy-content ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 9px;
+            width: 8px;
+            height: 8px;
+            background: var(--gold);
+            border-radius: 50%;
+            opacity: 0.7;
+        }
+        .policy-highlight {
+            background: var(--gold-pale);
+            border: 1px solid var(--gold-border);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin: 20px 0;
+            color: var(--gold);
+            font-weight: 500;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        .policy-footer {
+            margin-top: 35px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--text-lighter);
+            font-size: 0.82rem;
+        }
+
+        /* ====== АДАПТИВ ====== */
+        @media (max-width: 600px) {
+            .policy-card {
+                padding: 25px 20px;
+                border-radius: var(--radius);
+            }
+            .policy-title {
+                font-size: 1.8rem;
+            }
+            .policy-content h2 {
+                font-size: 1.15rem;
+            }
+            .policy-content p {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ====== ДЕКОРАТИВНЫЙ ФОН ====== -->
+    <div class="bg-decoration">
+        <div class="bg-orb"></div>
+        <div class="bg-orb"></div>
+    </div>
+
+    <!-- ====== ШАПКА ====== -->
+    <header>
+        <div class="container">
+            <nav>
+                <a href="index.html" class="logo">
+                    Агентство <span>недвижимости</span><span class="logo-dot"></span>
+                </a>
+                <div class="nav-links">
+                    <a href="index.html" class="btn-outline">← На главную</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ====== ОСНОВНОЙ КОНТЕНТ ====== -->
+    <main>
+        <div class="container">
+            <div class="policy-card">
+                <div class="policy-header">
+                    <div class="policy-badge">🔒 Конфиденциальность</div>
+                    <h1 class="policy-title"><span>Политика</span> конфиденциальности</h1>
+                    <p class="policy-date">Дата последнего обновления: 1 июля 2026 г.</p>
+                </div>
+
+                <div class="policy-content">
+                    <p>
+                        Настоящая Политика конфиденциальности описывает, как агентство недвижимости 
+                        собирает, использует и защищает персональные данные пользователей сайта. 
+                        Мы серьёзно относимся к вашей приватности и соблюдаем Федеральный закон 
+                        № 152-ФЗ «О персональных данных».
+                    </p>
+
+                    <h2>1. Какие данные мы собираем</h2>
+                    <p>При использовании нашего сайта мы можем запросить у вас следующие данные:</p>
+                    <ul>
+                        <li><strong>Имя</strong> — чтобы мы знали, как к вам обращаться.</li>
+                        <li><strong>Номер телефона</strong> — для оперативной связи и консультаций по объектам.</li>
+                        <li><strong>Адрес электронной почты (email)</strong> — для отправки подборок недвижимости и важных уведомлений.</li>
+                        <li><strong>Информация о предпочтениях</strong> — какие объекты вас интересуют (квартиры, дома, участки, район, бюджет).</li>
+                    </ul>
+
+                    <h2>2. Как мы используем ваши данные</h2>
+                    <p>Все собранные данные используются исключительно для следующих целей:</p>
+                    <ul>
+                        <li>Связь с вами для уточнения деталей по запросу.</li>
+                        <li>Подбор и предложение объектов недвижимости, соответствующих вашим критериям.</li>
+                        <li>Информирование о новых поступлениях, изменениях цен и специальных предложениях (только с вашего согласия).</li>
+                        <li>Улучшение качества нашего сервиса и обслуживания клиентов.</li>
+                    </ul>
+
+                    <div class="policy-highlight">
+                        💡 <strong>Важно:</strong> Мы никогда не передаём ваши данные третьим лицам без вашего 
+                        прямого согласия, за исключением случаев, предусмотренных законодательством РФ.
+                    </div>
+
+                    <h2>3. Хранение и защита данных</h2>
+                    <p>
+                        Мы принимаем все необходимые технические и организационные меры для защиты 
+                        ваших персональных данных от несанкционированного доступа, изменения, 
+                        раскрытия или уничтожения:
+                    </p>
+                    <ul>
+                        <li>Данные хранятся в защищённых системах с ограниченным доступом.</li>
+                        <li>Используется шифрование при передаче конфиденциальной информации.</li>
+                        <li>Регулярно проводится аудит безопасности наших систем.</li>
+                        <li>Доступ к персональным данным имеют только уполномоченные сотрудники.</li>
+                    </ul>
+
+                    <h2>4. Файлы Cookie</h2>
+                    <p>
+                        Наш сайт использует файлы cookie для улучшения пользовательского опыта. 
+                        Cookie — это небольшие текстовые файлы, которые сохраняются в вашем браузере 
+                        и помогают нам запоминать ваши настройки (например, тёмную тему оформления). 
+                        Вы можете отключить cookie в настройках браузера, но это может повлиять 
+                        на работу некоторых функций сайта.
+                    </p>
+
+                    <h2>5. Ваши права</h2>
+                    <p>В соответствии с законодательством, вы имеете право:</p>
+                    <ul>
+                        <li>Запросить информацию о том, какие ваши данные у нас хранятся.</li>
+                        <li>Потребовать исправления неточных или неполных данных.</li>
+                        <li>Отозвать согласие на обработку персональных данных.</li>
+                        <li>Отказаться от получения информационных рассылок в любой момент.</li>
+                    </ul>
+                    <p>
+                        Чтобы воспользоваться любым из этих прав, свяжитесь с нами по телефону 
+                        или электронной почте, указанным на странице контактов.
+                    </p>
+
+                    <h2>6. Отказ от рассылки</h2>
+                    <p>
+                        Если вы больше не хотите получать от нас информационные сообщения 
+                        и предложения, вы можете в любой момент отписаться от рассылки. 
+                        Для этого достаточно позвонить нам по телефону 
+                        <strong style="color: var(--gold);">+7 918 142 87 42</strong> 
+                        или написать на электронную почту. Мы немедленно исключим вас 
+                        из списка рассылки.
+                    </p>
+
+                    <h2>7. Изменения в политике</h2>
+                    <p>
+                        Мы оставляем за собой право вносить изменения в настоящую Политику 
+                        конфиденциальности. Актуальная версия всегда доступна на этой странице. 
+                        Рекомендуем периодически проверять её на предмет обновлений. 
+                        Продолжая пользоваться сайтом после внесения изменений, 
+                        вы подтверждаете согласие с обновлённой политикой.
+                    </p>
+
+                    <h2>8. Контактная информация</h2>
+                    <p>
+                        Если у вас есть вопросы относительно нашей Политики конфиденциальности 
+                        или обработки ваших данных, пожалуйста, свяжитесь с нами:
+                    </p>
+                    <ul>
+                        <li><strong>Телефон:</strong> +7 918 142 87 42</li>
+                        <li><strong>Агент:</strong> Галина Яценко Юрьевна</li>
+                        <li><strong>Регион работы:</strong> Краснодар и Краснодарский край</li>
+                    </ul>
+                </div>
+
+                <div class="policy-footer">
+                    © 2026 Агентство недвижимости. Все права защищены. Политика действует бессрочно.
+                </div>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Команда Aurora | Агентство недвижимости</title>
+    <style>
+        :root {
+            --bg: #f5f2ed;
+            --card: #ffffff;
+            --text: #2c2c2c;
+            --text-light: #6b6b6b;
+            --text-lighter: #999999;
+            --gold: #c9a96e;
+            --gold-dark: #a68a56;
+            --gold-light: #d4b87a;
+            --gold-pale: rgba(201, 169, 110, 0.1);
+            --gold-glow: rgba(201, 169, 110, 0.3);
+            --border: #e0dbd2;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
+            --shadow: 0 4px 20px rgba(0,0,0,0.06);
+            --shadow-hover: 0 20px 45px rgba(0,0,0,0.1);
+            --shadow-lg: 0 25px 60px rgba(0,0,0,0.12);
+            --radius-sm: 12px;
+            --radius: 18px;
+            --radius-lg: 24px;
+            --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .dark-theme {
+            --bg: #121212;
+            --card: #1c1c1c;
+            --text: #e8e8e8;
+            --text-light: #a0a0a0;
+            --text-lighter: #707070;
+            --border: #2a2a2a;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+            --shadow: 0 4px 20px rgba(0,0,0,0.4);
+            --shadow-hover: 0 20px 45px rgba(0,0,0,0.5);
+            --shadow-lg: 0 25px 60px rgba(0,0,0,0.6);
+            --gold-pale: rgba(201, 169, 110, 0.07);
+            --gold-glow: rgba(201, 169, 110, 0.2);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            transition: background var(--transition), color var(--transition);
+            overflow-x: hidden;
+        }
+
+        /* ====== ДЕКОРАТИВНЫЙ ФОН ====== */
+        .bg-decoration {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0;
+        }
+        .bg-orb {
+            position: absolute; border-radius: 50%; filter: blur(130px); opacity: 0.08;
+        }
+        .bg-orb:nth-child(1) { width: 700px; height: 700px; background: var(--gold); top: -15%; right: -10%; }
+        .bg-orb:nth-child(2) { width: 500px; height: 500px; background: var(--gold-dark); bottom: -8%; left: -8%; opacity: 0.06; }
+        .dark-theme .bg-orb { opacity: 0.04; }
+
+        /* ====== ШАПКА ====== */
+        header {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(245,242,237,0.85); backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            transition: all var(--transition);
+        }
+        .dark-theme header { background: rgba(18,18,18,0.85); }
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; position: relative; z-index: 1; }
+        nav {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 16px 0; flex-wrap: wrap; gap: 15px;
+        }
+        .logo {
+            font-size: 1.35rem; font-weight: 700; color: var(--text);
+            text-decoration: none; display: flex; align-items: center; gap: 8px;
+            letter-spacing: -0.3px;
+        }
+        .logo span { color: var(--gold); }
+        .nav-links { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+        .btn-outline {
+            background: transparent; border: 1.5px solid var(--border); padding: 9px 18px;
+            border-radius: 30px; cursor: pointer; font-size: 0.85rem; font-weight: 600;
+            transition: all var(--transition); color: var(--text); white-space: nowrap;
+            font-family: inherit; text-decoration: none; display: inline-flex;
+            align-items: center; gap: 6px; letter-spacing: -0.2px;
+        }
+        .btn-outline:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-1px); }
+
+        /* ====== ГЛАВНЫЙ ЭКРАН ====== */
+        main { padding: 40px 20px 80px; position: relative; z-index: 1; }
+        .page-header { text-align: center; margin-bottom: 50px; }
+        .page-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: var(--gold-pale); border: 1px solid rgba(201,169,110,0.2);
+            padding: 8px 20px; border-radius: 30px; font-size: 0.85rem;
+            font-weight: 600; color: var(--gold); margin-bottom: 18px;
+        }
+        .page-title {
+            font-size: 2.8rem; font-weight: 800; color: var(--text);
+            margin-bottom: 8px; letter-spacing: -1px; line-height: 1.1;
+        }
+        .page-title span {
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .page-subtitle { color: var(--text-light); font-size: 1.15rem; font-weight: 400; }
+
+        /* ====== СЕТКА СОТРУДНИКОВ ====== */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 28px;
+            margin-bottom: 50px;
+        }
+        .team-grid.few-items { grid-template-columns: repeat(auto-fill, minmax(300px, 400px)); justify-content: center; }
+
+        /* Карточка основателя (выделенная) */
+        .member-card {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: var(--radius); overflow: hidden;
+            transition: all var(--transition); box-shadow: var(--shadow);
+            display: flex; flex-direction: column; position: relative;
+        }
+        .member-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-hover); }
+        .member-card.featured {
+            border: 2px solid var(--gold);
+            box-shadow: 0 0 0 4px var(--gold-glow), var(--shadow);
+            background: linear-gradient(135deg, var(--card) 0%, var(--gold-pale) 100%);
+        }
+        .member-card.featured::before {
+            content: '★ Основатель'; position: absolute; top: 14px; right: 14px;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+            color: #fff; padding: 5px 14px; border-radius: 20px;
+            font-size: 0.72rem; font-weight: 700; letter-spacing: 0.5px; z-index: 2;
+        }
+        .dark-theme .member-card.featured::before { color: #1a1a1a; }
+        .member-photo {
+            width: 100%; height: 240px; background: linear-gradient(135deg, #e8e3d9 0%, #dcd6cb 100%);
+            display: flex; align-items: center; justify-content: center;
+            position: relative; overflow: hidden;
+        }
+        .dark-theme .member-photo { background: linear-gradient(135deg, #252525 0%, #1e1e1e 100%); }
+        .member-photo img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        .member-card:hover .member-photo img { transform: scale(1.04); }
+        .photo-placeholder {
+            display: flex; flex-direction: column; align-items: center; gap: 10px;
+            color: var(--text-lighter); font-weight: 500;
+        }
+        .photo-placeholder-avatar {
+            width: 72px; height: 72px; border-radius: 50%;
+            background: var(--gold-pale); display: flex; align-items: center;
+            justify-content: center; font-size: 2rem;
+            border: 2px dashed var(--border);
+        }
+        .member-body { padding: 22px 24px; flex: 1; display: flex; flex-direction: column; gap: 8px; }
+        .member-name { font-size: 1.25rem; font-weight: 700; color: var(--text); letter-spacing: -0.3px; }
+        .member-role { font-size: 0.85rem; color: var(--gold); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+        .member-info { font-size: 0.9rem; color: var(--text-light); display: flex; flex-direction: column; gap: 4px; margin-top: 5px; }
+        .member-info-item { display: flex; align-items: center; gap: 8px; }
+        .member-info-icon { color: var(--gold); font-weight: 600; min-width: 18px; text-align: center; }
+
+        /* ====== КАРТА ====== */
+        .map-section {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: var(--radius-lg); padding: 30px;
+            box-shadow: var(--shadow); text-align: center;
+        }
+        .map-section h2 {
+            font-size: 1.5rem; font-weight: 700; margin-bottom: 6px;
+            color: var(--text);
+        }
+        .map-subtitle { color: var(--text-light); font-size: 0.9rem; margin-bottom: 20px; }
+        .map-svg-container {
+            width: 100%; max-width: 700px; margin: 0 auto;
+            border-radius: var(--radius); overflow: hidden;
+            border: 1px solid var(--border);
+            background: #f0ece4;
+        }
+        .dark-theme .map-svg-container { background: #1a1a1a; }
+        .map-svg-container svg { width: 100%; height: auto; display: block; }
+        .map-marker-pulse {
+            fill: var(--gold); stroke: #fff; stroke-width: 3;
+            animation: mapPulse 2s infinite;
+        }
+        .dark-theme .map-marker-pulse { stroke: #1a1a1a; }
+        @keyframes mapPulse {
+            0%, 100% { r: 10; opacity: 1; }
+            50% { r: 18; opacity: 0.5; }
+        }
+        .map-legend {
+            display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;
+            margin-top: 15px; font-size: 0.82rem; color: var(--text-light);
+        }
+        .map-legend-item { display: flex; align-items: center; gap: 6px; }
+        .legend-dot {
+            width: 12px; height: 12px; background: var(--gold); border-radius: 50%;
+            border: 2px solid #fff;
+        }
+        .dark-theme .legend-dot { border-color: #1a1a1a; }
+
+        /* ====== АДАПТИВ ====== */
+        @media (max-width: 600px) {
+            .page-title { font-size: 2rem; }
+            .team-grid { grid-template-columns: 1fr; gap: 18px; }
+            .team-grid.few-items { grid-template-columns: 1fr; }
+            .member-photo { height: 180px; }
+            .member-card.featured::before { font-size: 0.65rem; padding: 4px 10px; top: 10px; right: 10px; }
+        }
+        /* ====== МЫ В СОЦСЕТЯХ ====== */
+        .social-section {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            margin-top: 30px;
+        }
+        .social-section h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+        .social-subtitle {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 25px;
+        }
+        .social-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .social-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 25px 20px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            background: var(--bg);
+            text-decoration: none;
+            color: var(--text);
+            transition: var(--transition);
+        }
+        .social-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--gold);
+            box-shadow: var(--shadow-sm);
+        }
+        .social-card.max {
+            border-color: #2A6A8A; /* фирменный цвет Max */
+        }
+        .social-card.max:hover {
+            background: rgba(42, 106, 138, 0.1);
+        }
+        .social-card.tg {
+            border-color: #2AABEE;
+        }
+        .social-card.tg:hover {
+            background: rgba(42, 171, 238, 0.1);
+        }
+        .social-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        .social-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+        .social-desc {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+        .dark-theme .social-card {
+            background: var(--card-alt);
+        }
+
+               /* ====== НОМЕРА ТЕЛЕФОНОВ ====== */
+        .phone-section {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            margin-top: 30px;
+        }
+        .phone-section h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+        .phone-subtitle {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 25px;
+        }
+        .phone-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .phone-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 25px 20px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--text);
+            transition: var(--transition);
+            cursor: default;
+            user-select: none;
+        }
+        .phone-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--gold);
+            box-shadow: var(--shadow-sm);
+        }
+        .phone-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        .phone-number {
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: -0.2px;
+        }
+        .phone-desc {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+        .dark-theme .phone-card {
+            background: #1a1a1a;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ====== ДЕКОРАТИВНЫЙ ФОН ====== -->
+    <div class="bg-decoration">
+        <div class="bg-orb"></div>
+        <div class="bg-orb"></div>
+    </div>
+
+    <!-- ====== ШАПКА ====== -->
+    <header>
+        <div class="container">
+            <nav>
+                <a href="index.html" class="logo">Агентство <span>недвижимости</span></a>
+                <div class="nav-links">
+                    <a href="index.html" class="btn-outline">← На главную</a>
+                    <button class="btn-outline" onclick="toggleTheme()" id="themeBtn">🌙 Тёмная</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ====== ОСНОВНОЙ КОНТЕНТ ====== -->
+    <main>
+        <div class="container">
+            <div class="page-header">
+                <div class="page-badge">👥 Наша сила</div>
+                <h1 class="page-title">Команда <span>Aurora</span></h1>
+                <p class="page-subtitle">Мы строим доверие вместе</p>
+            </div>
+
+            <!-- Сетка сотрудников -->
+            <div class="team-grid" id="teamGrid"></div>
+
+                       <!-- НОМЕРА ТЕЛЕФОНОВ -->
+            <div class="phone-section">
+                <h2>📞 Наши телефоны</h2>
+                <p class="phone-subtitle">Звоните нам напрямую — мы всегда на связи</p>
+                <div class="phone-grid">
+                    <div class="phone-card">
+                        <div class="phone-icon">📱</div>
+                        <div class="phone-number">+7 918 444 44 44</div>
+                        <div class="phone-desc">Агент 1</div>
+                    </div>
+                    <div class="phone-card">
+                        <div class="phone-icon">📱</div>
+                        <div class="phone-number">+7 918 000 00 00</div>
+                        <div class="phone-desc">Агент 2</div>
+                    </div>
+                    <div class="phone-card">
+                        <div class="phone-icon">📱</div>
+                        <div class="phone-number">+7 918 111 11 11</div>
+                        <div class="phone-desc">Агент 3</div>
+                    </div>
+                    <div class="phone-card">
+                        <div class="phone-icon">📱</div>
+                        <div class="phone-number">+7 918 222 22 22</div>
+                        <div class="phone-desc">Агент 4</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- МЫ В СОЦСЕТЯХ -->
+            <div class="social-section">
+                <h2>🌐 Мы на связи</h2>
+                <p class="social-subtitle">Подписывайтесь и пишите нам в удобном мессенджере</p>
+                <div class="social-grid">
+                    <a href="https://max.ru/ваш_ник" target="_blank" class="social-card max">
+                        <div class="social-icon">💬</div>
+                        <div class="social-name">Max</div>
+                        <div class="social-desc">Национальный мессенджер</div>
+                    </a>
+                    <a href="https://t.me/ваш_телеграм" target="_blank" class="social-card tg">
+                        <div class="social-icon">✈️</div>
+                        <div class="social-name">Telegram</div>
+                        <div class="social-desc">Быстрая связь</div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // ====== ДАННЫЕ ======
+        const DEFAULT_TEAM = [
+            {
+                id: 'founder',
+                name: 'Галина Яценко Юрьевна',
+                role: 'Основатель / Ведущий агент',
+                phone: '+7 918 468 94 71',
+                experience: '15 лет',
+                photo: '',
+                featured: true
+            },
+            {
+                id: 'tatyana',
+                name: 'Татьяна Лагунова',
+                role: 'Агент по недвижимости',
+                phone: '+7 918 --- -- --',
+                experience: 'Скоро уточним',
+                photo: '',
+                featured: false
+            }
+        ];
+
+        function loadTeam() {
+            const stored = localStorage.getItem('realtorData');
+            if (stored) {
+                try {
+                    const data = JSON.parse(stored);
+                    return data.team || DEFAULT_TEAM;
+                } catch(e) { return DEFAULT_TEAM; }
+            }
+            // Если данных нет — сохраняем дефолтные
+            saveTeam(DEFAULT_TEAM);
+            return DEFAULT_TEAM;
+        }
+
+        function saveTeam(team) {
+            let data = {};
+            try { data = JSON.parse(localStorage.getItem('realtorData')) || {}; } catch(e) { data = {}; }
+            data.team = team;
+            localStorage.setItem('realtorData', JSON.stringify(data));
+        }
+
+        // ====== ТЁМНАЯ ТЕМА ======
+        function toggleTheme() {
+            document.body.classList.toggle('dark-theme');
+            const btn = document.getElementById('themeBtn');
+            const isDark = document.body.classList.contains('dark-theme');
+            btn.textContent = isDark ? '☀️ Светлая' : '🌙 Тёмная';
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        }
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-theme');
+            document.getElementById('themeBtn').textContent = '☀️ Светлая';
+        }
+
+        // ====== РЕНДЕР КОМАНДЫ ======
+        function renderTeam() {
+            const team = loadTeam();
+            const grid = document.getElementById('teamGrid');
+
+            // Определяем класс для сетки
+            if (team.length <= 2) {
+                grid.classList.add('few-items');
+            } else {
+                grid.classList.remove('few-items');
+            }
+
+            // Сортируем: featured сначала
+            const sorted = [...team].sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
+
+            grid.innerHTML = sorted.map(member => `
+                <div class="member-card ${member.featured ? 'featured' : ''}">
+                    <div class="member-photo">
+                        ${member.photo 
+                            ? `<img src="${member.photo}" alt="${escapeHtml(member.name)}" loading="lazy">`
+                            : `<div class="photo-placeholder">
+                                <div class="photo-placeholder-avatar">👤</div>
+                                <span>Фото сотрудника</span>
+                               </div>`
+                        }
+                    </div>
+                    <div class="member-body">
+                        <h3 class="member-name">${escapeHtml(member.name)}</h3>
+                        <div class="member-role">${escapeHtml(member.role || 'Сотрудник')}</div>
+                        <div class="member-info">
+                            <div class="member-info-item">
+                                <span class="member-info-icon">📞</span> ${escapeHtml(member.phone || '—')}
+                            </div>
+                            <div class="member-info-item">
+                                <span class="member-info-icon">⏳</span> Стаж: ${escapeHtml(member.experience || '—')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        // ====== ИНИЦИАЛИЗАЦИЯ ======
+        renderTeam();
+    </script>
+</body>
+</html>

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Видео-обзоры районов | Агентство недвижимости</title>
+    <style>
+        :root {
+            --bg: #060606;
+            --card: #0f0f0f;
+            --card-alt: #141414;
+            --text: #e0e0e0;
+            --text-light: #a0a0a0;
+            --text-lighter: #666;
+            --gold: #c9a96e;
+            --gold-dark: #a68a56;
+            --gold-light: #d4b87a;
+            --gold-pale: rgba(201, 169, 110, 0.06);
+            --gold-border: rgba(201, 169, 110, 0.18);
+            --border: #1c1c1c;
+            --shadow: 0 4px 25px rgba(0,0,0,0.5);
+            --shadow-hover: 0 16px 45px rgba(0,0,0,0.7);
+            --radius: 16px;
+            --radius-lg: 22px;
+            --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .bg-decoration { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+        .bg-orb { position: absolute; border-radius: 50%; filter: blur(180px); opacity: 0.03; }
+        .bg-orb:nth-child(1) { width: 900px; height: 900px; background: var(--gold); top: -30%; right: -25%; }
+        .bg-orb:nth-child(2) { width: 600px; height: 600px; background: var(--gold-dark); bottom: -20%; left: -20%; opacity: 0.02; }
+
+        header {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(6,6,6,0.88); backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border-bottom: 1px solid var(--border);
+        }
+        .container { max-width: 1300px; margin: 0 auto; padding: 0 20px; position: relative; z-index: 1; }
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; flex-wrap: wrap; gap: 15px; }
+        .logo { font-size: 1.3rem; font-weight: 700; color: var(--text); text-decoration: none; display: flex; align-items: center; gap: 8px; letter-spacing: -0.3px; }
+        .logo span { color: var(--gold); }
+        .logo-dot { width: 8px; height: 8px; background: #27ae60; border-radius: 50%; animation: pulse 2.5s infinite; display: inline-block; margin-left: 2px; }
+        @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(39,174,96,0.5)} 50%{box-shadow:0 0 0 14px rgba(39,174,96,0)} }
+        .nav-links { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+        .btn-outline {
+            background: transparent; border: 1.5px solid var(--border); padding: 9px 18px;
+            border-radius: 30px; cursor: pointer; font-size: 0.85rem; font-weight: 600;
+            transition: all var(--transition); color: var(--text-light); white-space: nowrap;
+            font-family: inherit; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+        }
+        .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+
+        main { padding: 40px 20px 80px; position: relative; z-index: 1; }
+        .page-header { text-align: center; margin-bottom: 45px; }
+        .page-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: var(--gold-pale); border: 1px solid var(--gold-border);
+            padding: 7px 18px; border-radius: 30px; font-size: 0.82rem;
+            font-weight: 600; color: var(--gold); margin-bottom: 16px; letter-spacing: 0.4px;
+        }
+        .page-title { font-size: 2.8rem; font-weight: 800; color: var(--text); letter-spacing: -1px; line-height: 1.1; }
+        .page-title span { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold-dark) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .page-subtitle { color: var(--text-light); font-size: 1.1rem; margin-top: 6px; }
+
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+        .video-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            transition: all var(--transition);
+            box-shadow: var(--shadow);
+            opacity: 0;
+            transform: translateY(30px);
+            animation: cardReveal 0.5s ease forwards;
+        }
+        @keyframes cardReveal { to { opacity: 1; transform: translateY(0); } }
+        .video-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-hover), 0 0 30px rgba(201, 169, 110, 0.1);
+            border-color: var(--gold-border);
+        }
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            background: #000;
+        }
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            border: none;
+        }
+        .video-body {
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .video-icon {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            background: var(--gold-pale);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem; flex-shrink: 0;
+            color: var(--gold);
+        }
+        .video-name {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -0.2px;
+        }
+        .video-meta {
+            font-size: 0.75rem;
+            color: var(--text-lighter);
+            margin-top: 2px;
+        }
+        .video-link {
+            font-size: 0.75rem;
+            color: var(--gold);
+            text-decoration: none;
+            transition: all var(--transition);
+            margin-left: auto;
+        }
+        .video-link:hover {
+            color: var(--gold-light);
+            text-decoration: underline;
+        }
+
+        .empty-state {
+            text-align: center; padding: 80px 20px;
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: var(--radius-lg); box-shadow: var(--shadow);
+            grid-column: 1 / -1;
+        }
+        .empty-icon { font-size: 4rem; margin-bottom: 16px; opacity: 0.5; }
+        .empty-title { font-size: 1.3rem; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+        .empty-desc { color: var(--text-light); font-size: 0.9rem; }
+
+        @media (max-width: 900px) {
+            .video-grid { grid-template-columns: repeat(2, 1fr); gap: 18px; }
+        }
+        @media (max-width: 550px) {
+            .video-grid { grid-template-columns: 1fr; gap: 14px; }
+            .page-title { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-decoration">
+        <div class="bg-orb"></div>
+        <div class="bg-orb"></div>
+    </div>
+
+    <header>
+        <div class="container">
+            <nav>
+                <a href="index.html" class="logo">Агентство <span>недвижимости</span><span class="logo-dot"></span></a>
+                <div class="nav-links">
+                    <a href="index.html" class="btn-outline">← На главную</a>
+                    <a href="districts.html" class="btn-outline">Районы</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="page-header">
+                <div class="page-badge">🎥 Видео-обзоры</div>
+                <h1 class="page-title"><span>Районы</span> на видео</h1>
+                <p class="page-subtitle">Смотрите обзоры и выбирайте лучший район для жизни</p>
+            </div>
+
+            <div class="video-grid" id="videoGrid"></div>
+        </div>
+    </main>
+
+    <script>
+        function loadVideos() {
+            const stored = localStorage.getItem('realtorData');
+            if (stored) {
+                try {
+                    const data = JSON.parse(stored);
+                    return data.videos || [];
+                } catch(e) { return []; }
+            }
+            return [];
+        }
+
+        function saveVideos(videos) {
+            let data = {};
+            try { data = JSON.parse(localStorage.getItem('realtorData')) || {}; } catch(e) { data = {}; }
+            data.videos = videos;
+            localStorage.setItem('realtorData', JSON.stringify(data));
+        }
+
+        function getYouTubeId(url) {
+            if (!url) return null;
+            const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&?/\s]+)/);
+            return match ? match[1] : null;
+        }
+
+        function incrementView(id) {
+            const videos = loadVideos();
+            const index = videos.findIndex(v => v.id === id);
+            if (index !== -1) {
+                videos[index].views = (videos[index].views || 0) + 1;
+                saveVideos(videos);
+                renderVideos();
+            }
+        }
+
+        function renderVideos() {
+            const videos = loadVideos();
+            const grid = document.getElementById('videoGrid');
+
+            if (videos.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📭</div>
+                        <div class="empty-title">Пока нет видео-обзоров</div>
+                        <div class="empty-desc">Мы уже с камерой по районам. Как только всё смонтируем — сразу покажем</div>
+                    </div>`;
+                return;
+            }
+
+            grid.innerHTML = videos.map((item, i) => {
+                const videoId = getYouTubeId(item.url);
+                let embedUrl = '';
+                let platformName = '';
+
+                if (videoId) {
+                    embedUrl = `https://www.youtube.com/embed/${videoId}`;
+                    platformName = 'YouTube';
+                } else if (item.url.includes('rutube.ru')) {
+                    const rutubeMatch = item.url.match(/video\/([a-zA-Z0-9_]+)/);
+                    if (rutubeMatch && rutubeMatch[1]) {
+                        embedUrl = `https://rutube.ru/embed/${rutubeMatch[1]}`;
+                        platformName = 'Rutube';
+                    }
+                }
+
+                const views = item.views || 0;
+                return `
+                    <div class="video-card" style="animation-delay: ${i * 0.08}s">
+                        <div class="video-wrapper" onclick="incrementView('${item.id}')">
+                            ${embedUrl 
+                                ? `<iframe src="${embedUrl}" allowfullscreen loading="lazy" title="${escapeHtml(item.district)}"></iframe>` 
+                                : '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-lighter);">Не удалось загрузить видео. Проверьте ссылку.</div>'
+                            }
+                        </div>
+                        <div class="video-body">
+                            <div class="video-icon">📍</div>
+                            <div>
+                                <div class="video-name">${escapeHtml(item.district) || 'Без названия'}</div>
+                                ${item.desc ? `<div class="video-desc">${escapeHtml(item.desc)}</div>` : ''}
+                                <div class="video-meta">👁️ ${views} просмотров</div>
+                            </div>
+                            <a href="${item.url}" target="_blank" class="video-link">Смотреть на сайте →</a>
+                        </div>
+                    </div>`;
+            }).join('');
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        renderVideos();
+    </script>
+</body>
+</html>
