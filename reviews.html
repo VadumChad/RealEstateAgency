@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отзывы | Агентство недвижимости</title>
+    <style>
+        :root {
+            --bg: #f5f2ed;
+            --card: #ffffff;
+            --text: #2c2c2c;
+            --text-light: #6b6b6b;
+            --text-lighter: #999999;
+            --gold: #c9a96e;
+            --gold-dark: #a68a56;
+            --gold-light: #d4b87a;
+            --gold-pale: rgba(201, 169, 110, 0.1);
+            --border: #e0dbd2;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
+            --shadow: 0 4px 20px rgba(0,0,0,0.06);
+            --shadow-hover: 0 16px 40px rgba(0,0,0,0.1);
+            --radius-sm: 12px;
+            --radius: 18px;
+            --radius-lg: 24px;
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --danger: #e74c3c;
+            --success: #27ae60;
+        }
+
+        .dark-theme {
+            --bg: #121212;
+            --card: #1c1c1c;
+            --text: #e8e8e8;
+            --text-light: #a0a0a0;
+            --text-lighter: #707070;
+            --border: #2a2a2a;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+            --shadow: 0 4px 20px rgba(0,0,0,0.4);
+            --shadow-hover: 0 16px 40px rgba(0,0,0,0.5);
+            --gold-pale: rgba(201, 169, 110, 0.07);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            transition: background var(--transition), color var(--transition);
+        }
+
+        /* ====== ШАПКА ====== */
+        header {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(245,242,237,0.85); backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            transition: all var(--transition);
+        }
+        .dark-theme header { background: rgba(18,18,18,0.85); }
+        .container { max-width: 900px; margin: 0 auto; padding: 0 20px; }
+        nav {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 16px 0; flex-wrap: wrap; gap: 15px;
+        }
+        .logo {
+            font-size: 1.35rem; font-weight: 700; color: var(--text);
+            text-decoration: none; display: flex; align-items: center; gap: 8px;
+        }
+        .logo span { color: var(--gold); }
+        .nav-links { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+        .btn-outline {
+            background: transparent; border: 1.5px solid var(--border); padding: 9px 18px;
+            border-radius: 30px; cursor: pointer; font-size: 0.85rem; font-weight: 600;
+            transition: all var(--transition); color: var(--text); white-space: nowrap;
+            font-family: inherit; text-decoration: none; display: inline-flex;
+            align-items: center; gap: 6px;
+        }
+        .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+        .btn-gold {
+            background: var(--gold); color: #fff; border: none; padding: 10px 22px;
+            border-radius: 30px; cursor: pointer; font-size: 0.9rem; font-weight: 600;
+            transition: all var(--transition); font-family: inherit;
+        }
+        .btn-gold:hover { background: var(--gold-dark); transform: translateY(-2px); box-shadow: 0 8px 25px rgba(201,169,110,0.3); }
+        .dark-theme .btn-gold { color: #1a1a1a; }
+        .btn-sm { padding: 8px 16px; font-size: 0.8rem; }
+
+        /* ====== ОСНОВНОЙ КОНТЕНТ ====== */
+        main { padding: 40px 20px 80px; }
+        .page-title {
+            font-size: 2.2rem; font-weight: 800; text-align: center; margin-bottom: 30px;
+        }
+        .page-title span { color: var(--gold); }
+
+        /* ====== БЛОК АВТОРИЗАЦИИ ====== */
+        .auth-block {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 25px 30px;
+            margin-bottom: 35px; box-shadow: var(--shadow);
+            transition: all var(--transition);
+        }
+        .auth-block h3 {
+            font-size: 1.2rem; font-weight: 700; margin-bottom: 15px;
+            color: var(--text);
+        }
+        .auth-form { display: flex; flex-direction: column; gap: 12px; }
+        .auth-row { display: flex; gap: 10px; flex-wrap: wrap; }
+        .auth-input {
+            flex: 1; min-width: 150px; padding: 11px 16px;
+            background: var(--bg); border: 1.5px solid var(--border);
+            border-radius: 12px; color: var(--text); font-size: 0.9rem;
+            font-family: inherit; outline: none; transition: var(--transition);
+        }
+        .auth-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,169,110,0.1); }
+        .auth-error { color: var(--danger); font-size: 0.85rem; min-height: 20px; }
+        .auth-success { color: var(--success); font-size: 0.85rem; }
+        .user-info {
+            display: flex; justify-content: space-between; align-items: center;
+            flex-wrap: wrap; gap: 10px;
+        }
+        .user-name { font-weight: 600; color: var(--gold); }
+        .tabs { display: flex; gap: 0; margin-bottom: 15px; }
+        .tab-btn {
+            padding: 8px 20px; background: transparent; border: 1.5px solid var(--border);
+            cursor: pointer; font-weight: 600; font-size: 0.85rem; transition: var(--transition);
+            color: var(--text); font-family: inherit;
+        }
+        .tab-btn:first-child { border-radius: 10px 0 0 10px; }
+        .tab-btn:last-child { border-radius: 0 10px 10px 0; }
+        .tab-btn.active { background: var(--gold); color: #fff; border-color: var(--gold); }
+        .dark-theme .tab-btn.active { color: #1a1a1a; }
+
+        /* ====== ФОРМА ОТЗЫВА ====== */
+        .review-form-block {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 25px 30px;
+            margin-bottom: 35px; box-shadow: var(--shadow);
+        }
+        .review-form-block h3 { margin-bottom: 15px; }
+        .review-form { display: flex; flex-direction: column; gap: 12px; }
+        .review-input, .review-textarea {
+            width: 100%; padding: 11px 16px; background: var(--bg);
+            border: 1.5px solid var(--border); border-radius: 12px;
+            color: var(--text); font-size: 0.9rem; font-family: inherit;
+            outline: none; transition: var(--transition); resize: vertical;
+        }
+        .review-input:focus, .review-textarea:focus {
+            border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,169,110,0.1);
+        }
+        .rating-stars { display: flex; gap: 8px; font-size: 1.8rem; cursor: pointer; }
+        .rating-stars span { color: #ccc; transition: var(--transition); }
+        .rating-stars span.active { color: var(--gold); }
+        .dark-theme .rating-stars span { color: #555; }
+        .dark-theme .rating-stars span.active { color: var(--gold); }
+
+        /* ====== СПИСОК ОТЗЫВОВ ====== */
+        .testimonials-list { display: flex; flex-direction: column; gap: 20px; }
+        .testimonial-card {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 22px 26px;
+            box-shadow: var(--shadow); transition: var(--transition);
+        }
+        .testimonial-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+        .testimonial-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; }
+        .testimonial-author { font-weight: 700; font-size: 1.05rem; color: var(--text); }
+        .testimonial-date { font-size: 0.8rem; color: var(--text-lighter); }
+        .testimonial-stars { color: var(--gold); font-size: 0.95rem; letter-spacing: 2px; }
+        .testimonial-text { color: var(--text-light); font-size: 0.95rem; line-height: 1.6; }
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-lighter); }
+        .empty-state-icon { font-size: 4rem; margin-bottom: 15px; opacity: 0.5; }
+        .auth-message {
+            text-align: center; padding: 20px; color: var(--text-light);
+            font-size: 0.95rem; background: var(--gold-pale);
+            border-radius: var(--radius-sm); margin-bottom: 20px;
+            border: 1px solid rgba(201,169,110,0.2);
+        }
+
+        @media (max-width: 600px) {
+            .page-title { font-size: 1.6rem; }
+            .auth-block, .review-form-block, .testimonial-card { padding: 18px 16px; }
+            .rating-stars { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ====== ШАПКА ====== -->
+    <header>
+        <div class="container">
+            <nav>
+                <a href="index.html" class="logo">Агентство <span>недвижимости</span></a>
+                <div class="nav-links">
+                    <a href="index.html" class="btn-outline">← На главную</a>
+                    <button class="btn-outline" onclick="toggleTheme()" id="themeBtn">🌙 Тёмная</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <h1 class="page-title">⭐ <span>Отзывы</span> клиентов</h1>
+
+            <!-- Блок авторизации -->
+            <div class="auth-block" id="authBlock"></div>
+
+            <!-- Форма отзыва -->
+            <div class="review-form-block" id="reviewFormBlock"></div>
+
+            <!-- Список отзывов -->
+            <h2 style="margin-bottom:20px; color:var(--text);">Все отзывы</h2>
+            <div class="testimonials-list" id="testimonialsList"></div>
+        </div>
+    </main>
+
+    <script>
+        // ====== КЛЮЧИ localStorage ======
+        const USERS_KEY = 'realtor_users';
+        const CURRENT_USER_KEY = 'realtor_currentUser';
+        const DATA_KEY = 'realtorData';
+
+        // ====== ТЁМНАЯ ТЕМА ======
+        function toggleTheme() {
+            document.body.classList.toggle('dark-theme');
+            const btn = document.getElementById('themeBtn');
+            const isDark = document.body.classList.contains('dark-theme');
+            btn.textContent = isDark ? '☀️ Светлая' : '🌙 Тёмная';
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        }
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-theme');
+            document.getElementById('themeBtn').textContent = '☀️ Светлая';
+        }
+
+        // ====== РАБОТА С ДАННЫМИ ======
+        function getUsers() {
+            try { return JSON.parse(localStorage.getItem(USERS_KEY)) || []; } catch(e) { return []; }
+        }
+        function saveUsers(users) { localStorage.setItem(USERS_KEY, JSON.stringify(users)); }
+        function getCurrentUser() {
+            try { return JSON.parse(localStorage.getItem(CURRENT_USER_KEY)); } catch(e) { return null; }
+        }
+        function saveCurrentUser(user) { localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user)); }
+        function clearCurrentUser() { localStorage.removeItem(CURRENT_USER_KEY); }
+
+        function getTestimonials() {
+            try {
+                const data = JSON.parse(localStorage.getItem(DATA_KEY));
+                return data?.testimonials || [];
+            } catch(e) { return []; }
+        }
+        function saveTestimonials(testimonials) {
+            let data = {};
+            try { data = JSON.parse(localStorage.getItem(DATA_KEY)) || {}; } catch(e) { data = {}; }
+            data.testimonials = testimonials;
+            localStorage.setItem(DATA_KEY, JSON.stringify(data));
+        }
+
+        let currentUser = getCurrentUser();
+
+        // ====== РЕНДЕР АВТОРИЗАЦИИ ======
+        function renderAuth() {
+            const block = document.getElementById('authBlock');
+            if (currentUser) {
+                block.innerHTML = `
+                    <div class="user-info">
+                        <span>👤 Добро пожаловать, <span class="user-name">${escapeHtml(currentUser.name)}</span></span>
+                        <button class="btn-outline btn-sm" onclick="logout()">🚪 Выйти</button>
+                    </div>`;
+            } else {
+                block.innerHTML = `
+                    <div class="tabs">
+                        <button class="tab-btn active" onclick="switchAuthTab('login', this)">Вход</button>
+                        <button class="tab-btn" onclick="switchAuthTab('register', this)">Регистрация</button>
+                    </div>
+                    <div id="loginForm" class="auth-form">
+                        <input class="auth-input" type="email" id="loginEmail" placeholder="Email">
+                        <input class="auth-input" type="password" id="loginPassword" placeholder="Пароль">
+                        <div class="auth-error" id="loginError"></div>
+                        <button class="btn-gold" onclick="login()">Войти</button>
+                    </div>
+                    <div id="registerForm" class="auth-form" style="display:none;">
+                        <input class="auth-input" type="text" id="regName" placeholder="Ваше имя">
+                        <input class="auth-input" type="email" id="regEmail" placeholder="Email">
+                        <input class="auth-input" type="password" id="regPassword" placeholder="Пароль (мин. 4 символа)">
+                        <div class="auth-error" id="regError"></div>
+                        <button class="btn-gold" onclick="register()">Зарегистрироваться</button>
+                    </div>`;
+            }
+        }
+
+        function switchAuthTab(tab, btn) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('loginForm').style.display = tab === 'login' ? 'flex' : 'none';
+            document.getElementById('registerForm').style.display = tab === 'register' ? 'flex' : 'none';
+            document.getElementById('loginError').textContent = '';
+            document.getElementById('regError').textContent = '';
+        }
+
+        function login() {
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const errorEl = document.getElementById('loginError');
+            errorEl.textContent = '';
+
+            if (!email || !password) { errorEl.textContent = 'Заполните все поля'; return; }
+
+            const users = getUsers();
+            const user = users.find(u => u.email === email && u.password === password);
+            if (!user) { errorEl.textContent = 'Неверный email или пароль'; return; }
+
+            currentUser = { name: user.name, email: user.email };
+            saveCurrentUser(currentUser);
+            renderAll();
+        }
+
+               function register() {
+            const name = document.getElementById('regName').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const errorEl = document.getElementById('regError');
+            errorEl.textContent = '';
+
+            if (!name || !email || !password) {
+                errorEl.textContent = 'Заполните все поля';
+                return;
+            }
+            if (password.length < 4) {
+                errorEl.textContent = 'Пароль должен быть не менее 4 символов';
+                return;
+            }
+            if (!email.includes('@')) {
+                errorEl.textContent = 'Введите корректный email';
+                return;
+            }
+
+            // ====== ЭТА МАГИЯ ДЕЛАЕТ БОЛЬШИЕ БУКВЫ И ПРОБЕЛЫ ======
+            const formattedName = name
+                .split(' ')
+                .filter(word => word.length > 0)
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                .join(' ');
+
+            const users = getUsers();
+            if (users.find(u => u.email === email)) {
+                errorEl.textContent = 'Пользователь с таким email уже существует';
+                return;
+            }
+
+            users.push({
+                name: formattedName,
+                email: email,
+                password: password
+            });
+            saveUsers(users);
+
+            currentUser = { name: formattedName, email: email };
+            saveCurrentUser(currentUser);
+            renderAll();
+        }
+                function logout() {
+            clearCurrentUser();
+            currentUser = null;
+            renderAll();
+        }
+
+        // ====== РЕНДЕР ФОРМЫ ОТЗЫВА ======
+        function renderReviewForm() {
+            const block = document.getElementById('reviewFormBlock');
+            if (!currentUser) {
+                block.innerHTML = `
+                    <h3>📝 Оставить отзыв</h3>
+                    <div class="auth-message">🔒 Авторизуйтесь, чтобы оставить отзыв</div>`;
+                return;
+            }
+            block.innerHTML = `
+                <h3>📝 Оставить отзыв</h3>
+                <div class="review-form">
+                    <div class="rating-stars" id="ratingStars">
+                        <span onclick="setRating(1)">☆</span>
+                        <span onclick="setRating(2)">☆</span>
+                        <span onclick="setRating(3)">☆</span>
+                        <span onclick="setRating(4)">☆</span>
+                        <span onclick="setRating(5)">☆</span>
+                    </div>
+                    <textarea class="review-textarea" id="reviewText" rows="3" placeholder="Напишите ваш отзыв..."></textarea>
+                    <div class="auth-error" id="reviewError"></div>
+                    <button class="btn-gold" onclick="submitReview()">Отправить отзыв</button>
+                </div>`;
+            selectedRating = 0;
+            updateStars();
+        }
+
+        let selectedRating = 0;
+        function setRating(r) { selectedRating = r;
+            updateStars(); }
+
+        function updateStars() {
+            const stars = document.querySelectorAll('#ratingStars span');
+            stars.forEach((s, i) => {
+                s.textContent = i < selectedRating ? '★' : '☆';
+                s.classList.toggle('active', i < selectedRating);
+            });
+        }
+
+        function submitReview() {
+            const text = document.getElementById('reviewText').value.trim();
+            const errorEl = document.getElementById('reviewError');
+            errorEl.textContent = '';
+
+            if (!text) { errorEl.textContent = 'Напишите текст отзыва'; return; }
+            if (selectedRating === 0) { errorEl.textContent = 'Поставьте оценку'; return; }
+
+            const testimonials = getTestimonials();
+            const newReview = {
+                id: 't' + Date.now(),
+                name: currentUser.name,
+                text: text,
+                date: new Date().toISOString().split('T')[0],
+                rating: selectedRating
+            };
+            testimonials.unshift(newReview);
+            saveTestimonials(testimonials);
+            document.getElementById('reviewText').value = '';
+            selectedRating = 0;
+            updateStars();
+            renderTestimonials();
+        }
+
+        // ====== РЕНДЕР ОТЗЫВОВ ======
+        function renderTestimonials() {
+            const list = document.getElementById('testimonialsList');
+            const testimonials = getTestimonials();
+
+            if (testimonials.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📭</div>
+                        <p>Пока нет отзывов. Будьте первым!</p>
+                    </div>`;
+                return;
+            }
+
+            // Сортируем: сначала новые
+            const sorted = [...testimonials].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            list.innerHTML = sorted.map(t => {
+                const stars = '★'.repeat(t.rating || 5) + '☆'.repeat(5 - (t.rating || 5));
+                const dateFormatted = formatDate(t.date);
+                return `
+                    <div class="testimonial-card">
+                        <div class="testimonial-header">
+                            <span class="testimonial-author">${escapeHtml(t.name)}</span>
+                            <span class="testimonial-date">${dateFormatted}</span>
+                        </div>
+                        <div class="testimonial-stars">${stars}</div>
+                        <p class="testimonial-text">${escapeHtml(t.text)}</p>
+                    </div>`;
+            }).join('');
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const months = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+            try {
+                const d = new Date(dateString);
+                if (isNaN(d.getTime())) return dateString;
+                return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+            } catch(e) { return dateString; }
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        // ====== ПОЛНЫЙ РЕНДЕР ======
+        function renderAll() {
+            renderAuth();
+            renderReviewForm();
+            renderTestimonials();
+        }
+
+        // ====== ИНИЦИАЛИЗАЦИЯ ======
+        renderAll();
+    </script>
+</body>
+</html>

@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель | Агентство недвижимости</title>
+    <style>
+        /* Все стили остаются без изменений */
+        :root {
+            --bg: #1a1a1a;
+            --card: #242424;
+            --text: #e0e0e0;
+            --text-light: #a0a0a0;
+            --gold: #c9a96e;
+            --gold-dark: #a68a56;
+            --border: #333333;
+            --radius: 14px;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            --transition: 0.25s ease;
+            --danger: #e74c3c;
+            --success: #2ecc71;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        .login-screen {
+            background: var(--card);
+            border: 2px solid var(--gold);
+            border-radius: var(--radius);
+            padding: 50px 40px;
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: var(--shadow);
+        }
+
+        .login-screen .icon {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+        }
+
+        .login-screen h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--gold);
+        }
+
+        .login-screen p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 25px;
+        }
+
+        .login-screen input {
+            width: 100%;
+            padding: 14px 18px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 1rem;
+            margin-bottom: 15px;
+            outline: none;
+            transition: var(--transition);
+            font-family: inherit;
+        }
+
+        .login-screen input:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.15);
+        }
+
+        .login-screen .error {
+            color: var(--danger);
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+            min-height: 20px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: inherit;
+            white-space: nowrap;
+        }
+
+        .btn-gold {
+            background: var(--gold);
+            color: #1a1a1a;
+            width: 100%;
+        }
+        .btn-gold:hover {
+            background: #dbb87c;
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--gold);
+            color: var(--gold);
+        }
+        .btn-outline:hover {
+            background: rgba(201, 169, 110, 0.1);
+        }
+
+        .btn-danger {
+            background: transparent;
+            border: 1px solid var(--danger);
+            color: var(--danger);
+            padding: 6px 14px;
+            font-size: 0.8rem;
+        }
+        .btn-danger:hover {
+            background: rgba(231, 76, 60, 0.15);
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            border-radius: 8px;
+        }
+
+        .panel {
+            display: none;
+            background: var(--card);
+            border-radius: var(--radius);
+            width: 100%;
+            max-width: 900px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .panel.active {
+            display: block;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 25px;
+            border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .panel-header h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            overflow-x: auto;
+        }
+
+        .tab {
+            padding: 15px 25px;
+            background: transparent;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            font-family: inherit;
+            white-space: nowrap;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab:hover {
+            color: var(--gold);
+        }
+
+        .tab.active {
+            color: var(--gold);
+            border-bottom-color: var(--gold);
+        }
+
+        .tab-content {
+            display: none;
+            padding: 25px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .item-card {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            transition: var(--transition);
+        }
+
+        .item-card:hover {
+            border-color: var(--gold);
+        }
+
+        .item-info {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .item-info strong {
+            display: block;
+            font-size: 1rem;
+            margin-bottom: 3px;
+        }
+
+        .item-info span {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 30px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal h3 {
+            font-size: 1.2rem;
+            color: var(--gold);
+            margin-bottom: 20px;
+        }
+
+        .modal label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-bottom: 4px;
+            margin-top: 12px;
+        }
+
+        .modal input,
+        .modal textarea,
+        .modal select {
+            width: 100%;
+            padding: 10px 14px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 0.9rem;
+            outline: none;
+            transition: var(--transition);
+            font-family: inherit;
+            resize: vertical;
+        }
+
+        .modal input:focus,
+        .modal textarea:focus,
+        .modal select:focus {
+            border-color: var(--gold);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+            justify-content: flex-end;
+            position: sticky;
+            bottom: 0;
+            background: var(--card);
+            padding-top: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .login-screen {
+                padding: 30px 20px;
+            }
+            .panel-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .item-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .item-actions {
+                align-self: flex-end;
+            }
+            .tab {
+                padding: 12px 15px;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ====== ЭКРАН ВХОДА ====== -->
+    <div class="login-screen" id="loginScreen">
+        <div class="icon">🔐</div>
+        <h1>Админ-панель</h1>
+        <p>Агентство недвижимости</p>
+        <input type="password" id="passwordInput" placeholder="Введите пароль" autofocus>
+        <div class="error" id="loginError"></div>
+        <button class="btn btn-gold" onclick="login()">Войти</button>
+    </div>
+
+    <!-- ====== ПАНЕЛЬ УПРАВЛЕНИЯ ====== -->
+    <div class="panel" id="adminPanel">
+        <div class="panel-header">
+            <h2>⚙️ Управление сайтом</h2>
+            <button class="btn btn-outline btn-sm" onclick="logout()">🚪 Выйти</button>
+        </div>
+
+        <!-- Вкладки -->
+        <div class="tabs">
+            <button class="tab active" data-tab="catalog">🏡 Каталог</button>
+            <button class="tab" data-tab="news">📰 Новости</button>
+            <button class="tab" data-tab="testimonials">⭐ Отзывы</button>
+            <button class="tab" data-tab="stats">📊 Статистика</button>
+            <button class="tab" data-tab="team">👥 Команда</button>
+            <button class="tab" data-tab="hotOffers">🔥 Горячие</button>
+             <button class="tab" data-tab="videos">🎥 Видео районов</button>
+        </div>
+
+        <!-- Каталог -->
+        <div class="tab-content active" id="tab-catalog">
+            <div class="list-header">
+                <span>Всего объектов: <strong id="catalogCount">0</strong></span>
+                <button class="btn btn-gold btn-sm" onclick="openModal('catalog')">+ Добавить объект</button>
+            </div>
+            <div id="catalogList"></div>
+        </div>
+
+        <!-- Новости -->
+        <div class="tab-content" id="tab-news">
+            <div class="list-header">
+                <span>Всего новостей: <strong id="newsCount">0</strong></span>
+                <button class="btn btn-gold btn-sm" onclick="openModal('news')">+ Добавить новость</button>
+            </div>
+            <div id="newsList"></div>
+        </div>
+
+        <!-- Отзывы -->
+        <div class="tab-content" id="tab-testimonials">
+            <div class="list-header">
+                <span>Всего отзывов: <strong id="testimonialsCount">0</strong></span>
+                <button class="btn btn-gold btn-sm" onclick="openModal('testimonial')">+ Добавить отзыв</button>
+            </div>
+            <div id="testimonialsList"></div>
+        </div>
+        
+        <!-- Статистика -->
+        <div class="tab-content" id="tab-stats">
+            <div class="list-header">
+                <span>📊 Общая статистика сайта</span>
+            </div>
+            <div id="statsContent" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; padding: 10px 0;"></div>
+        </div>
+        
+        <!-- Команда -->
+        <div class="tab-content" id="tab-team">
+            <div class="list-header">
+                <span>Всего сотрудников: <strong id="teamCount">0</strong></span>
+                <button class="btn btn-gold btn-sm" onclick="openModal('team')">+ Добавить сотрудника</button>
+            </div>
+            <div id="teamList"></div>
+        </div>
+                <!-- Горячие предложения -->
+        <div class="tab-content" id="tab-hotOffers">
+            <div class="list-header">
+                <span>Всего предложений: <strong id="hotOffersCount">0</strong></span>
+                <button class="btn btn-gold btn-sm" onclick="openModal('hotOffers')">+ Добавить предложение</button>
+            </div>
+            <div id="hotOffersList"></div>
+        </div>
+                <!-- Видео районов -->
+        <div class="tab-content" id="tab-videos">
+            <div class="list-header">
+                <span>Всего видео: <strong id="videosCount">0</strong></span>
+                <button class="btn btn-gold btn-sm" onclick="openModal('videos')">+ Добавить видео</button>
+            </div>
+            <div id="videosList"></div>
+        </div>
+    </div>
+
+    <!-- ====== МОДАЛЬНОЕ ОКНО ====== -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modalContent"></div>
+    </div>
+
+    <script>
+        // ====== ДАННЫЕ ======
+        const STORAGE_KEY = 'realtorData';
+        const DEFAULT_DATA = {
+            catalog: [
+                { id: 'c1', type: 'flat', title: '2-к квартира в центре', price: '8 500 000 ₽', area: '65 м²',
+                    floor: '5/12', img: '🏢', district: 'central', description: 'Уютная квартира в центре' },
+                { id: 'c2', type: 'house', title: 'Дом у моря', price: '22 000 000 ₽', area: '140 м²',
+                    land: '8 соток', img: '🏡', district: 'prikubansky', description: 'Прекрасный дом у моря' },
+                { id: 'c3', type: 'plot', title: 'Участок в сосновом лесу', price: '3 200 000 ₽', area: '12 соток',
+                    img: '🌲', district: 'karasunsky', description: 'Участок в экологически чистом районе' }
+            ],
+            news: [
+                { id: 'n1', title: 'Снижение ставок по ипотеке', date: '2026-07-01',
+                    text: 'Центробанк снизил ключевую ставку до 12%.' },
+                { id: 'n2', title: 'Новый жилой комплекс', date: '2026-06-20',
+                    text: 'Старт продаж в ЖК «Золотой берег» на Фестивальном.' }
+            ],
+            testimonials: [
+                { id: 't1', name: 'Ольга Морозова', text: 'Галина помогла продать квартиру за 10 дней! Очень довольна.',
+                    date: '2026-06-10', rating: 5 },
+                { id: 't2', name: 'Семья Петровых', text: 'Купили дом мечты в Прикубанском. Спасибо за профессионализм!',
+                    date: '2026-05-22', rating: 5 },
+                { id: 't3', name: 'Алексей К.', text: 'Отличное агентство, всё чётко и без обмана.', date: '2026-04-15',
+                    rating: 4 }
+            ],
+            team: [], // Добавляем пустой массив для команды
+                        hotOffers: [
+                { id: 'h1', title: '2-к квартира в Центре', price: '7 200 000 ₽', desc: 'Просторная квартира с евроремонтом. Скидка 15% до конца месяца.', photo: '' },
+                { id: 'h2', title: 'Дом в Прикубанском', price: '19 800 000 ₽', desc: 'Уютный дом с гаражом и садом. Скидка 10%.', photo: '' }
+            ],
+                                               videos: [
+                { id: 'v1', district: 'Центральный', url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', desc: 'Обзор центральной части города' },
+                { id: 'v2', district: 'Фестивальный', url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', desc: 'Парки и новостройки района' }
+            ]
+        };
+
+        function loadData() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored) {
+                try { return JSON.parse(stored); } catch (e) { 
+                    console.error('Ошибка загрузки данных:', e);
+                    return JSON.parse(JSON.stringify(DEFAULT_DATA)); 
+                }
+            }
+            return JSON.parse(JSON.stringify(DEFAULT_DATA));
+        }
+
+        function saveData(data) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }
+
+        let data = loadData();
+        let currentTab = 'catalog';
+        let editingId = null;
+        let editingType = null;
+
+        // ====== АВТОРИЗАЦИЯ ======
+        function login() {
+            const password = document.getElementById('passwordInput').value;
+            const errorEl = document.getElementById('loginError');
+            if (password === 'galinaMAMA') {
+                errorEl.textContent = '';
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('adminPanel').classList.add('active');
+                renderAll();
+                switchTab('catalog');
+            } else {
+                errorEl.textContent = '❌ Неверный пароль';
+                document.getElementById('passwordInput').value = '';
+                document.getElementById('passwordInput').focus();
+            }
+        }
+
+        function logout() {
+            document.getElementById('loginScreen').style.display = '';
+            document.getElementById('adminPanel').classList.remove('active');
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('loginError').textContent = '';
+            document.getElementById('passwordInput').focus();
+            closeModal();
+        }
+
+        // Обработка Enter на экране входа
+        document.getElementById('passwordInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') login();
+        });
+
+        // ====== ВКЛАДКИ ======
+        function switchTab(tab) {
+            currentTab = tab;
+            
+            // Убираем активный класс со всех вкладок и контента
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+            
+            // Активируем нужную вкладку
+            const activeTab = document.querySelector(`.tab[data-tab="${tab}"]`);
+            if (activeTab) {
+                activeTab.classList.add('active');
+            }
+            
+            // Активируем нужный контент
+            const activeContent = document.getElementById('tab-' + tab);
+            if (activeContent) {
+                activeContent.classList.add('active');
+            }
+            
+            // Обновляем контент
+            if (tab === 'stats') {
+                renderStats();
+            } else if (tab === 'catalog' || tab === 'news' || tab === 'testimonials' || tab === 'team') {
+                renderList(tab);
+            }
+        }
+
+        // Добавляем обработчики на вкладки
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabName = this.getAttribute('data-tab');
+                    if (tabName) {
+                        switchTab(tabName);
+                    }
+                });
+            });
+        });
+
+        // ====== РЕНДЕР СПИСКОВ ======
+        function renderList(tab) {
+            const listEl = document.getElementById(tab + 'List');
+            const countEl = document.getElementById(tab + 'Count');
+            
+            if (!listEl) {
+                console.error('Элемент списка не найден:', tab + 'List');
+                return;
+            }
+            
+            const items = data[tab] || [];
+
+            if (countEl) countEl.textContent = items.length;
+
+            if (items.length === 0) {
+                listEl.innerHTML = '<p style="color:var(--text-light); text-align:center; padding:30px;">Пока ничего нет. Добавьте первую запись.</p>';
+                return;
+            }
+
+            let html = '';
+            items.forEach(item => {
+                let infoHtml = '';
+                if (tab === 'catalog') {
+                    const typeLabel = item.type === 'flat' ? 'Квартира' : item.type === 'house' ? 'Дом' : 'Участок';
+                    infoHtml = `<strong>${item.img || '🏠'} ${item.title}</strong><span>${typeLabel} · ${item.price} · ${item.area || ''}</span>`;
+                } else if (tab === 'news') {
+                    infoHtml = `<strong>${item.title}</strong><span>${item.date} — ${item.text.substring(0, 60)}${item.text.length > 60 ? '...' : ''}</span>`;
+                } else if (tab === 'testimonials') {
+                    const stars = '⭐'.repeat(item.rating || 5);
+                    infoHtml = `<strong>${item.name} ${stars}</strong><span>${item.date} — ${item.text.substring(0, 60)}${item.text.length > 60 ? '...' : ''}</span>`;
+
+                } else if (tab === 'team') {
+                    infoHtml = `<strong>${item.name}</strong><span>${item.role || 'Сотрудник'} · ${item.experience || ''}</span>`;
+                    } else if (tab === 'hotOffers') {
+                    infoHtml = `<strong>🔥 ${item.title}</strong><span>${item.price} — ${(item.desc || '').substring(0, 50)}...</span>`;
+                                                               } else if (tab === 'videos') {
+                    infoHtml = `<strong>📍 ${item.district}</strong><span>${item.url ? item.url.substring(0, 50) + '...' : 'Нет ссылки'}${item.desc ? ' · ' + item.desc.substring(0, 40) + '...' : ''}</span>`;
+                }
+                html += `
+                    <div class="item-card">
+                        <div class="item-info">${infoHtml}</div>
+                        <div class="item-actions">
+                            <button class="btn btn-outline btn-sm" onclick="openModal('${tab}', '${item.id}')">✏️</button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteItem('${tab}', '${item.id}')">🗑️</button>
+                        </div>
+                    </div>`;
+            });
+            listEl.innerHTML = html;
+        }
+
+        function renderAll() {
+            renderList('catalog');
+            renderList('news');
+            renderList('testimonials');
+            renderList('team');
+            renderList('hotOffers');
+            renderList('videos');
+        }
+
+        // ====== УДАЛЕНИЕ ======
+        function deleteItem(tab, id) {
+            if (!data[tab]) {
+                console.error('Вкладка не найдена:', tab);
+                return;
+            }
+            
+            if (confirm('Удалить эту запись? Действие нельзя отменить.')) {
+                data[tab] = data[tab].filter(item => item.id !== id);
+                saveData(data);
+                renderList(tab);
+            }
+        }
+
+        // ====== МОДАЛЬНОЕ ОКНО ======
+        function openModal(tab, id = null) {
+            console.log('Открываем модальное окно:', tab, id);
+            
+            // Нормализуем название вкладки для testimonials
+            if (tab === 'testimonial') {
+                tab = 'testimonials';
+            }
+            
+            editingType = tab;
+            editingId = id;
+            const modalContent = document.getElementById('modalContent');
+            
+            if (!data[tab]) {
+                console.error('Данные для вкладки не найдены:', tab);
+                data[tab] = [];
+            }
+            
+            const item = id ? data[tab].find(i => i.id === id) : null;
+            const isEdit = !!item;
+
+            let title = '';
+            let formHtml = '';
+
+            if (tab === 'catalog') {
+                title = isEdit ? 'Редактировать объект' : 'Новый объект';
+                formHtml = `
+                    <label>Тип</label>
+                    <select id="formType">
+                        <option value="flat" ${item && item.type === 'flat' ? 'selected' : ''}>Квартира</option>
+                        <option value="house" ${item && item.type === 'house' ? 'selected' : ''}>Дом</option>
+                        <option value="plot" ${item && item.type === 'plot' ? 'selected' : ''}>Участок</option>
+                    </select>
+                    <label>Название</label>
+                    <input id="formTitle" value="${item ? item.title : ''}" placeholder="Например: 3-к квартира на Юбилейном">
+                    <label>Цена</label>
+                    <input id="formPrice" value="${item ? item.price : ''}" placeholder="Например: 12 500 000 ₽">
+                    
+                    <label>Район</label>
+                    <select id="formDistrict">
+                        <option value="" ${!item || !item.district ? 'selected' : ''}>Не указан</option>
+                        <option value="central" ${item && item.district === 'central' ? 'selected' : ''}>Центральный</option>
+                        <option value="zapadny" ${item && item.district === 'zapadny' ? 'selected' : ''}>Западный</option>
+                        <option value="prikubansky" ${item && item.district === 'prikubansky' ? 'selected' : ''}>Прикубанский</option>
+                        <option value="karasunsky" ${item && item.district === 'karasunsky' ? 'selected' : ''}>Карасунский</option>
+                        <option value="festivalny" ${item && item.district === 'festivalny' ? 'selected' : ''}>Фестивальный</option>
+                        <option value="gidrostroiteley" ${item && item.district === 'gidrostroiteley' ? 'selected' : ''}>Гидростроителей</option>
+                        <option value="yubileyny" ${item && item.district === 'yubileyny' ? 'selected' : ''}>Юбилейный</option>
+                        <option value="pashkovsky" ${item && item.district === 'pashkovsky' ? 'selected' : ''}>Пашковский</option>
+                        <option value="komsomolsky" ${item && item.district === 'komsomolsky' ? 'selected' : ''}>Комсомольский</option>
+                        <option value="krasnaya-ploshad" ${item && item.district === 'krasnaya-ploshad' ? 'selected' : ''}>Красная Площадь</option>
+                        <option value="cheremushki" ${item && item.district === 'cheremushki' ? 'selected' : ''}>Черёмушки</option>
+                        <option value="enem" ${item && item.district === 'enem' ? 'selected' : ''}>Энем</option>
+                        <option value="yablonovsky" ${item && item.district === 'yablonovsky' ? 'selected' : ''}>Яблоновский</option>
+                        <option value="plodorodny" ${item && item.district === 'plodorodny' ? 'selected' : ''}>Плодородный</option>
+                        <option value="znamensky" ${item && item.district === 'znamensky' ? 'selected' : ''}>Знаменский</option>
+                    </select>
+
+                    <label>Описание</label>
+                    <textarea id="formDescription" rows="3" placeholder="Краткое описание объекта">${item ? item.description || '' : ''}</textarea>
+
+                    <label>Площадь</label>
+                    <input id="formArea" value="${item ? item.area : ''}" placeholder="Например: 78 м² или 10 соток">
+                    
+                    <label>Этаж (для квартиры)</label>
+                    <input id="formFloor" value="${item ? item.floor || '' : ''}" placeholder="Например: 7/16">
+                    <label>Участок (для дома)</label>
+                    <input id="formLand" value="${item ? item.land || '' : ''}" placeholder="Например: 6 соток">
+                    
+                    <label>Эмодзи-иконка</label>
+                    <input id="formImg" value="${item ? item.img || '' : ''}" placeholder="Например: 🏢">
+                    
+                    <label>Фотографии (URL)</label>
+                    <input id="formPhoto1" value="${item && item.photos && item.photos[0] ? item.photos[0] : ''}" placeholder="Ссылка на фото 1" style="margin-bottom: 8px;">
+                    <input id="formPhoto2" value="${item && item.photos && item.photos[1] ? item.photos[1] : ''}" placeholder="Ссылка на фото 2" style="margin-bottom: 8px;">
+                    <input id="formPhoto3" value="${item && item.photos && item.photos[2] ? item.photos[2] : ''}" placeholder="Ссылка на фото 3" style="margin-bottom: 8px;">
+                    <input id="formPhoto4" value="${item && item.photos && item.photos[3] ? item.photos[3] : ''}" placeholder="Ссылка на фото 4" style="margin-bottom: 8px;">
+                    <input id="formPhoto5" value="${item && item.photos && item.photos[4] ? item.photos[4] : ''}" placeholder="Ссылка на фото 5" style="margin-bottom: 8px;">
+                    <input id="formPhoto6" value="${item && item.photos && item.photos[5] ? item.photos[5] : ''}" placeholder="Ссылка на фото 6" style="margin-bottom: 8px;">
+                    <input id="formPhoto7" value="${item && item.photos && item.photos[6] ? item.photos[6] : ''}" placeholder="Ссылка на фото 7" style="margin-bottom: 8px;">
+                `;
+            } else if (tab === 'news') {
+                title = isEdit ? 'Редактировать новость' : 'Новая новость';
+                formHtml = `
+                    <label>Заголовок</label>
+                    <input id="formTitle" value="${item ? item.title : ''}" placeholder="Заголовок новости">
+                    <label>Дата</label>
+                    <input type="date" id="formDate" value="${item ? item.date : ''}">
+                    <label>Текст</label>
+                    <textarea id="formText" rows="3" placeholder="Текст новости">${item ? item.text : ''}</textarea>
+                `;
+            } else if (tab === 'testimonials') {
+                title = isEdit ? 'Редактировать отзыв' : 'Новый отзыв';
+                formHtml = `
+                    <label>Имя клиента</label>
+                    <input id="formName" value="${item ? item.name : ''}" placeholder="Например: Иван Петров">
+                    <label>Текст отзыва</label>
+                    <textarea id="formText" rows="3" placeholder="Текст отзыва">${item ? item.text : ''}</textarea>
+                    <label>Дата</label>
+                    <input type="date" id="formDate" value="${item ? item.date : ''}">
+                    <label>Рейтинг (1-5)</label>
+                    <input type="number" id="formRating" value="${item ? item.rating : 5}" min="1" max="5">
+                `;
+            } else if (tab === 'team') {
+                title = isEdit ? 'Редактировать сотрудника' : 'Новый сотрудник';
+                formHtml = `
+                    <label>Имя</label>
+                    <input id="formName" value="${item ? item.name : ''}" placeholder="ФИО сотрудника">
+                    <label>Должность</label>
+                    <input id="formRole" value="${item ? item.role || '' : ''}" placeholder="Например: Агент по недвижимости">
+                    <label>Телефон</label>
+                    <input id="formPhone" value="${item ? item.phone || '' : ''}" placeholder="+7 (___) ___-__-__">
+                    <label>Стаж</label>
+                    <input id="formExperience" value="${item ? item.experience || '' : ''}" placeholder="Например: 5 лет">
+                    <label>Фото (URL)</label>
+                    <input id="formPhoto" value="${item ? item.photo || '' : ''}" placeholder="Ссылка на фото (необязательно)">
+                    <label>
+                        <input type="checkbox" id="formFeatured" ${item && item.featured ? 'checked' : ''}> 
+                        Основатель / Выделенная карточка
+                    </label>
+                `;
+                            } else if (tab === 'hotOffers') {
+                title = isEdit ? 'Редактировать предложение' : 'Новое предложение';
+                formHtml = `
+                    <label>Название</label>
+                    <input id="formTitle" value="${item ? item.title : ''}" placeholder="Например: 2-к квартира в Центре">
+                    <label>Цена</label>
+                    <input id="formPrice" value="${item ? item.price : ''}" placeholder="Например: 7 200 000 ₽">
+                    <label>Описание</label>
+                    <textarea id="formDesc" rows="3" placeholder="Краткое описание">${item ? item.desc || '' : ''}</textarea>
+                    <label>Ссылка на фото (URL)</label>
+                    <input id="formPhoto" value="${item ? item.photo || '' : ''}" placeholder="https://...">
+                `;
+                                                   } else if (tab === 'videos') {
+                title = isEdit ? 'Редактировать видео' : 'Новое видео';
+                formHtml = `
+                    <label>Платформа</label>
+                    <select id="formPlatform">
+                        <option value="youtube" ${item && item.platform === 'youtube' ? 'selected' : ''}>YouTube</option>
+                        <option value="rutube" ${item && item.platform === 'rutube' ? 'selected' : ''}>Rutube</option>
+                    </select>
+                    <label>Название района</label>
+                    <input id="formDistrict" value="${item ? item.district : ''}" placeholder="Например: Центральный">
+                    <label>Ссылка на видео</label>
+                    <input id="formUrl" value="${item ? item.url : ''}" placeholder="Вставьте ссылку (YouTube или Rutube)">
+                    <label>Описание</label>
+                    <textarea id="formDesc" rows="2" placeholder="Краткое описание района или видео">${item ? item.desc || '' : ''}</textarea>
+                `;
+            }
+
+            modalContent.innerHTML = `
+                <h3>${title}</h3>
+                ${formHtml}
+                <div class="modal-actions">
+                    <button class="btn btn-outline btn-sm" onclick="closeModal()">Отмена</button>
+                    <button class="btn btn-gold btn-sm" onclick="saveItem()">💾 Сохранить</button>
+                </div>
+            `;
+
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+            editingId = null;
+            editingType = null;
+        }
+
+               function saveItem() {
+            console.log('Сохраняем элемент:', editingType);
+            
+            const tab = editingType;
+            const getVal = (id) => {
+                const el = document.getElementById(id);
+                return el ? el.value : '';
+            };
+
+            let item = {};
+
+            if (tab === 'catalog') {
+                item = {
+                    id: editingId || 'c' + Date.now(),
+                    type: getVal('formType'),
+                    title: getVal('formTitle'),
+                    price: getVal('formPrice'),
+                    area: getVal('formArea'),
+                    floor: getVal('formFloor'),
+                    land: getVal('formLand'),
+                    img: getVal('formImg') || '🏠',
+                    district: getVal('formDistrict'),
+                    description: getVal('formDescription'),
+                    photos: [
+                        getVal('formPhoto1'),
+                        getVal('formPhoto2'),
+                        getVal('formPhoto3'),
+                        getVal('formPhoto4'),
+                        getVal('formPhoto5'),
+                        getVal('formPhoto6'),
+                        getVal('formPhoto7')
+                    ].filter(url => url.trim() !== '')
+                };
+                
+                if (!item.title || !item.price) {
+                    alert('Название и цена обязательны!');
+                    return;
+                }
+            } else if (tab === 'news') {
+                item = {
+                    id: editingId || 'n' + Date.now(),
+                    title: getVal('formTitle'),
+                    date: getVal('formDate'),
+                    text: getVal('formText')
+                };
+                
+                if (!item.title || !item.text) {
+                    alert('Заголовок и текст обязательны!');
+                    return;
+                }
+            } else if (tab === 'testimonials') {
+                item = {
+                    id: editingId || 't' + Date.now(),
+                    name: getVal('formName'),
+                    text: getVal('formText'),
+                    date: getVal('formDate'),
+                    rating: parseInt(getVal('formRating')) || 5
+                };
+                
+                if (!item.name || !item.text) {
+                    alert('Имя и текст отзыва обязательны!');
+                    return;
+                }
+            } else if (tab === 'team') {
+                item = {
+                    id: editingId || 'm' + Date.now(),
+                    name: getVal('formName'),
+                    role: getVal('formRole'),
+                    phone: getVal('formPhone'),
+                    experience: getVal('formExperience'),
+                    photo: getVal('formPhoto'),
+                    featured: document.getElementById('formFeatured')?.checked || false
+                };
+            } else if (tab === 'hotOffers') {
+                item = {
+                    id: editingId || 'h' + Date.now(),
+                    title: getVal('formTitle'),
+                    price: getVal('formPrice'),
+                    desc: getVal('formDesc'),
+                    photo: getVal('formPhoto')
+                };
+            } else if (tab === 'videos') {
+                item = {
+                    id: editingId || 'v' + Date.now(),
+                    platform: getVal('formPlatform'),
+                    district: getVal('formDistrict'),
+                    url: getVal('formUrl'),
+                    desc: getVal('formDesc'),
+                    views: item ? (item.views || 0) : 0
+                };
+                
+                if (!item.district || !item.url) {
+                    alert('Название района и ссылка на видео обязательны!');
+                    return;
+                }
+            }
+
+            // Убеждаемся, что массив существует
+            if (!data[tab]) {
+                data[tab] = [];
+            }
+
+            if (editingId) {
+                // Редактирование
+                const index = data[tab].findIndex(i => i.id === editingId);
+                if (index !== -1) {
+                    data[tab][index] = item;
+                } else {
+                    data[tab].push(item);
+                }
+            } else {
+                // Добавление
+                data[tab].push(item);
+            }
+
+            saveData(data);
+            closeModal();
+            renderList(tab);
+        }
+
+        // Закрытие модального окна по клику на фон
+        document.getElementById('modalOverlay').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        // Закрытие по Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // ====== СТАТИСТИКА ======
+        function renderStats() {
+            const container = document.getElementById('statsContent');
+            if (!container) return;
+
+            const catalog = data.catalog || [];
+            const news = data.news || [];
+            const testimonials = data.testimonials || [];
+
+            const totalObjects = catalog.length;
+            const flats = catalog.filter(i => i.type === 'flat').length;
+            const houses = catalog.filter(i => i.type === 'house').length;
+            const plots = catalog.filter(i => i.type === 'plot').length;
+
+            let totalRating = 0;
+            testimonials.forEach(t => totalRating += (t.rating || 0));
+            const avgRating = testimonials.length > 0 ? (totalRating / testimonials.length).toFixed(1) : 0;
+
+            container.innerHTML = `
+                <div style="background: var(--bg); padding: 20px; border-radius: var(--radius); border: 1px solid var(--border); text-align: center;">
+                    <div style="font-size: 2.5rem;">🏠</div>
+                    <div style="font-size: 2rem; font-weight: 800; color: var(--gold);">${totalObjects}</div>
+                    <div style="color: var(--text-light);">Всего объектов</div>
+                    <div style="font-size: 0.8rem; color: var(--text-light); margin-top: 5px;">
+                        Квартир: ${flats} · Домов: ${houses} · Участков: ${plots}
+                    </div>
+                </div>
+
+                <div style="background: var(--bg); padding: 20px; border-radius: var(--radius); border: 1px solid var(--border); text-align: center;">
+                    <div style="font-size: 2.5rem;">📰</div>
+                    <div style="font-size: 2rem; font-weight: 800; color: var(--gold);">${news.length}</div>
+                    <div style="color: var(--text-light);">Новостей</div>
+                </div>
+
+                <div style="background: var(--bg); padding: 20px; border-radius: var(--radius); border: 1px solid var(--border); text-align: center;">
+                    <div style="font-size: 2.5rem;">⭐</div>
+                    <div style="font-size: 2rem; font-weight: 800; color: var(--gold);">${testimonials.length}</div>
+                    <div style="color: var(--text-light);">Отзывов</div>
+                    <div style="font-size: 0.8rem; color: var(--text-light); margin-top: 5px;">
+                        Рейтинг: ${avgRating} / 5
+                    </div>
+                </div>
+            `;
+        }
+
+        // ====== ИНИЦИАЛИЗАЦИЯ ======
+        // Сохраняем начальные данные если их нет
+        const storedData = localStorage.getItem(STORAGE_KEY);
+        if (!storedData) {
+            saveData(DEFAULT_DATA);
+        }
+        
+        // Рендерим все при загрузке страницы
+        renderAll();
+        switchTab('catalog');
+        
+        console.log('Панель администратора инициализирована');
+    </script>
+</body>
+</html>
