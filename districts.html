@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Районы Краснодара | Агентство недвижимости</title>
+    <style>
+        :root {
+            --bg: #050505;
+            --card: #0d0d0d;
+            --card-alt: #111;
+            --text: #e8e8e8;
+            --text-light: #9a9a9a;
+            --text-lighter: #606060;
+            --gold: #c9a96e;
+            --gold-dark: #a68a56;
+            --gold-light: #d4b87a;
+            --gold-pale: rgba(201,169,110,0.06);
+            --gold-border: rgba(201,169,110,0.2);
+            --gold-glow: rgba(201,169,110,0.5);
+            --green: #2ecc71;
+            --red: #e74c3c;
+            --orange: #f39c12;
+            --border: #1a1a1a;
+            --shadow: 0 8px 40px rgba(0,0,0,0.8);
+            --shadow-hover: 0 20px 55px rgba(0,0,0,0.9);
+            --radius: 14px;
+            --radius-lg: 22px;
+            --transition: 0.4s cubic-bezier(0.4,0,0.2,1);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior:smooth; }
+        body {
+            font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+            background:var(--bg); color:var(--text); line-height:1.5;
+            min-height:100vh; overflow-x:hidden; -webkit-font-smoothing:antialiased;
+        }
+        .bg-decoration { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; }
+        .bg-orb { position:absolute; border-radius:50%; filter:blur(200px); opacity:0.03; }
+        .bg-orb:nth-child(1) { width:1200px; height:1200px; background:var(--gold); top:-40%; right:-35%; }
+        .bg-orb:nth-child(2) { width:800px; height:800px; background:var(--gold-dark); bottom:-30%; left:-25%; opacity:0.02; }
+        header {
+            position:sticky; top:0; z-index:100;
+            background:rgba(5,5,5,0.9); backdrop-filter:blur(35px);
+            border-bottom:1px solid var(--border);
+        }
+        .container { max-width:1400px; margin:0 auto; padding:0 20px; position:relative; z-index:1; }
+        nav { display:flex; justify-content:space-between; align-items:center; padding:16px 0; flex-wrap:wrap; gap:15px; }
+        .logo { font-size:1.3rem; font-weight:700; color:var(--text); text-decoration:none; display:flex; align-items:center; gap:8px; }
+        .logo span { color:var(--gold); }
+        .nav-links { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+        .btn-outline {
+            background:transparent; border:1.5px solid var(--border); padding:9px 18px;
+            border-radius:30px; cursor:pointer; font-size:0.85rem; font-weight:600;
+            color:var(--text-light); text-decoration:none; transition:var(--transition);
+            display:inline-flex; align-items:center; gap:6px; font-family:inherit;
+        }
+        .btn-outline:hover { border-color:var(--gold); color:var(--gold); }
+        .btn-gold {
+            background:linear-gradient(135deg,var(--gold),var(--gold-dark));
+            color:#050505; border:none; padding:10px 22px; border-radius:30px;
+            font-weight:700; cursor:pointer; font-size:0.85rem; text-decoration:none;
+            transition:var(--transition); display:inline-flex; align-items:center; gap:6px;
+            font-family:inherit;
+        }
+        .btn-gold:hover { transform:translateY(-2px); box-shadow:0 12px 30px rgba(201,169,110,0.3); }
+        main { padding:30px 20px 80px; position:relative; z-index:1; }
+        .page-header { text-align:center; margin-bottom:35px; }
+        .page-badge {
+            display:inline-flex; align-items:center; gap:8px;
+            background:var(--gold-pale); border:1px solid var(--gold-border);
+            padding:7px 18px; border-radius:30px; font-size:0.8rem;
+            font-weight:600; color:var(--gold); margin-bottom:14px; letter-spacing:0.4px;
+        }
+        .page-title { font-size:2.8rem; font-weight:800; letter-spacing:-1px; }
+        .page-title span {
+            background:linear-gradient(135deg,var(--gold),var(--gold-light),var(--gold-dark));
+            -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+        }
+        .page-subtitle { color:var(--text-light); font-size:1rem; }
+
+        /* ЯНДЕКС.КАРТА */
+        .map-section {
+            background:var(--card);
+            border:1px solid var(--border);
+            border-radius:var(--radius-lg);
+            padding:8px;
+            margin-bottom:35px;
+            box-shadow:var(--shadow);
+        }
+        .map-container {
+            width:100%;
+            height:500px;
+            border-radius:var(--radius);
+            overflow:hidden;
+            background:#0a0a0a;
+        }
+        .map-container iframe {
+            width:100%;
+            height:100%;
+            border:none;
+        }
+        #yandexMap {
+            width:100%;
+            height:100%;
+            background:#0a0a0a;
+        }
+
+        /* СЕТКА КАРТОЧЕК */
+        .districts-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:16px; }
+        .district-card {
+            background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
+            overflow:hidden; cursor:pointer; transition:var(--transition); box-shadow:0 2px 15px rgba(0,0,0,0.5);
+            animation:reveal 0.5s ease forwards; opacity:0; transform:translateY(30px);
+        }
+        @keyframes reveal { to{opacity:1;transform:translateY(0)} }
+        .district-card:hover { transform:translateY(-5px); box-shadow:var(--shadow-hover); border-color:var(--gold-border); }
+        .district-photo {
+            width:100%; height:160px; background:linear-gradient(135deg,#111,#0a0a0a,#181818);
+            display:flex; align-items:center; justify-content:center; position:relative;
+        }
+        .district-photo img { width:100%; height:100%; object-fit:cover; }
+        .photo-placeholder { color:var(--text-lighter); font-size:0.8rem; display:flex; flex-direction:column; align-items:center; gap:8px; }
+        .photo-placeholder-icon { width:40px; height:40px; border-radius:50%; background:rgba(255,255,255,0.02); border:1px dashed #2a2a2a; display:flex; align-items:center; justify-content:center; font-size:1.2rem; }
+        .district-body { padding:16px 18px; }
+        .district-name { font-weight:700; font-size:1rem; margin-bottom:6px; }
+        .district-stats { display:flex; gap:10px; flex-wrap:wrap; font-size:0.72rem; color:var(--text-light); }
+        .stat-badge { display:flex; align-items:center; gap:4px; background:var(--card-alt); padding:4px 10px; border-radius:10px; }
+
+        /* МОДАЛЬНОЕ ОКНО */
+        .modal-overlay {
+            display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+            background:rgba(0,0,0,0.85); backdrop-filter:blur(12px);
+            z-index:200; align-items:center; justify-content:center; padding:15px;
+        }
+        .modal-overlay.active { display:flex; }
+        .modal {
+            background:var(--card); border:1px solid var(--gold-border); border-radius:var(--radius-lg);
+            width:100%; max-width:650px; max-height:90vh; overflow-y:auto;
+            box-shadow:0 35px 80px rgba(0,0,0,0.95);
+            animation:modalIn 0.4s ease; padding:25px; position:relative;
+        }
+        @keyframes modalIn { from{opacity:0;transform:scale(0.9) translateY(20px)} to{opacity:1;transform:scale(1) translateY(0)} }
+        .modal-close {
+            position:absolute; top:12px; right:12px; background:var(--card-alt);
+            border:1px solid var(--border); width:32px; height:32px; border-radius:50%;
+            display:flex; align-items:center; justify-content:center; cursor:pointer;
+            color:var(--text-light); transition:var(--transition); font-size:1rem;
+        }
+        .modal-close:hover { background:#e74c3c; color:#fff; }
+        .modal-photo { width:100%; height:200px; border-radius:var(--radius); overflow:hidden; margin-bottom:16px; background:#111; display:flex; align-items:center; justify-content:center; }
+        .modal-photo img { width:100%; height:100%; object-fit:cover; }
+        .modal-title { font-size:1.5rem; font-weight:800; margin-bottom:4px; }
+        .modal-desc { color:var(--text-light); font-size:0.9rem; margin-bottom:14px; line-height:1.5; }
+        .metric-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px; }
+        .metric {
+            background:var(--card-alt); border-radius:10px; padding:10px 12px;
+            border:1px solid var(--border);
+        }
+        .metric-label { font-size:0.7rem; color:var(--text-lighter); margin-bottom:3px; }
+        .metric-value { font-size:1.1rem; font-weight:700; }
+        .metric-bar { height:4px; border-radius:2px; margin-top:4px; background:#1a1a1a; overflow:hidden; }
+        .metric-fill { height:100%; border-radius:2px; transition:width 0.6s ease; }
+        .infra-grid { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:14px; }
+        .infra-item { text-align:center; background:var(--card-alt); padding:10px 14px; border-radius:10px; border:1px solid var(--border); min-width:60px; }
+        .infra-icon { font-size:1.4rem; margin-bottom:2px; }
+        .infra-value { font-weight:700; font-size:0.9rem; }
+        .infra-label { font-size:0.65rem; color:var(--text-lighter); }
+        .modal-rating { display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+        .rating-number { font-size:2rem; font-weight:800; color:var(--gold); }
+        .rating-stars { color:var(--gold); font-size:1.1rem; }
+
+        @media (max-width:768px) {
+            .map-container { height:350px; }
+            .page-title { font-size:2rem; }
+            .metric-grid { grid-template-columns:1fr; }
+            .districts-grid { grid-template-columns:1fr; }
+        }
+        /* РАЗДЕЛИТЕЛИ КАТЕГОРИЙ */
+.category-divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 10px 0 6px;
+    padding: 0 4px;
+}
+.divider-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-border), transparent);
+}
+.divider-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    white-space: nowrap;
+    padding: 6px 16px;
+    background: var(--gold-pale);
+    border: 1px solid var(--gold-border);
+    border-radius: 20px;
+}
+
+/* МЕДИА-РЯД: ФОТО + ВИДЕО */
+.modal-media-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+.modal-photo-half {
+    flex: 1;
+    height: 200px;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: #111;
+}
+.modal-photo-half img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.modal-video-half {
+    flex: 1;
+    height: 200px;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: #000;
+}
+.modal-video-full {
+    width: 100%;
+    height: auto;
+    max-height: 350px;
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 16px;
+    background: #000;
+}
+
+/* HTML5 ВИДЕО-ПЛЕЕР */
+.modal-player {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background: #000;
+    outline: none;
+}
+.modal-video-full .modal-player {
+    height: auto;
+    max-height: 350px;
+}
+.modal-player::-webkit-media-controls-panel {
+    background: linear-gradient(0deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 100%);
+}
+.modal-player::-webkit-media-controls-play-button {
+    background-color: var(--gold);
+    border-radius: 50%;
+}
+
+@media (max-width: 600px) {
+    .modal-media-row {
+        flex-direction: column;
+    }
+    .modal-photo-half,
+    .modal-video-half {
+        height: 180px;
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="bg-decoration"><div class="bg-orb"></div><div class="bg-orb"></div></div>
+    <header>
+        <div class="container"><nav><a href="index.html" class="logo">Агентство <span>недвижимости</span></a><div class="nav-links"><a href="index.html" class="btn-outline">← На главную</a><a href="catalog.html" class="btn-gold">Каталог</a></div></nav></div>
+    </header>
+    <main>
+        <div class="container">
+            <div class="page-header"><div class="page-badge">📍 Районы города</div><h1 class="page-title">Районы <span>Краснодара</span></h1><p class="page-subtitle">Подробная информация о каждом районе</p></div>
+
+            <!-- ЯНДЕКС.КАРТА -->
+            <div class="map-section">
+                <div class="map-container">
+                    <div id="yandexMap"></div>
+                </div>
+            </div>
+
+            <!-- КАРТОЧКИ -->
+            <div class="districts-grid" id="districtsGrid"></div>
+        </div>
+    </main>
+
+    <!-- МОДАЛЬНОЕ ОКНО -->
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+        <div class="modal" id="modalContent" onclick="event.stopPropagation()"></div>
+    </div>
+
+    
+
+    <script>
+        // ====== ВСТАВЬ СВОЙ API-КЛЮЧ ЗДЕСЬ ======
+        const YANDEX_API_KEY = '5e7bd78a-4d42-4234-9463-93dd2e09ba15';
+
+        // ====== ДАННЫЕ РАЙОНОВ (С ГРУППИРОВКОЙ) ======
+// ====== ДАННЫЕ РАЙОНОВ (С ГРУППИРОВКОЙ) ======
+const districts = [
+    // ========== РАЙОНЫ ==========
+    {
+        id: 'rossiyskiy',
+        name: 'Посёлок Российский',
+        category: 'Районы',
+        desc: 'Активно застраивающийся пригород. Много новых ЖК, развивающаяся инфраструктура, удобный выезд на Ростовское шоссе.',
+        rating: 7, quality: 68, crime: 14, noise: 40, liquidity: 70,
+        schools: 5, kindergartens: 6, stops: 12, stadiums: 1,
+        photo: '',
+        video: '',
+        coords: [45.0800, 38.9100]
+    },
+    {
+        id: 'izumrudny-gorod',
+        name: 'Изумрудный город',
+        category: 'Районы',
+        desc: 'Современный жилой комплекс с развитой внутренней инфраструктурой. Магазины, аптеки, детские площадки. Популярен у молодых семей.',
+        rating: 8, quality: 82, crime: 8, noise: 35, liquidity: 85,
+        schools: 3, kindergartens: 4, stops: 10, stadiums: 1,
+        photo: '',
+        video: '',
+        coords: [45.0680, 38.9450]
+    },
+    {
+        id: 'krepost',
+        name: 'Крепость',
+        category: 'Районы',
+        desc: 'Район с историческим названием, плотная жилая застройка. Хорошая доступность к центру, много магазинов и остановок.',
+        rating: 7, quality: 70, crime: 16, noise: 50, liquidity: 72,
+        schools: 5, kindergartens: 6, stops: 14, stadiums: 1,
+        photo: '',
+        video: '',
+        coords: [45.0400, 38.9900]
+    },
+    {
+        id: 'industrialny',
+        name: 'Индустриальный',
+        category: 'Районы',
+        desc: 'Рабочий район с развитой промышленностью. Доступное жильё, много гаражных кооперативов и складов. Цены ниже среднего.',
+        rating: 5, quality: 50, crime: 25, noise: 65, liquidity: 48,
+        schools: 7, kindergartens: 8, stops: 18, stadiums: 1,
+        photo: '',
+        video: '',
+        coords: [45.0600, 39.0200]
+    },
+    {
+        id: 'rostovskoe-shosse',
+        name: 'Ростовское шоссе',
+        category: 'Районы',
+        desc: 'Оживлённая магистраль с торговыми центрами, автосалонами и сервисами. Квартиры и частные дома вдоль шоссе. Отличная транспортная доступность.',
+        rating: 6, quality: 55, crime: 20, noise: 80, liquidity: 60,
+        schools: 6, kindergartens: 7, stops: 25, stadiums: 1,
+        photo: '',
+        video: '',
+        coords: [45.0850, 38.9200]
+    },
+    {
+        id: 'yuzhny-pos',
+        name: 'Посёлок Южный',
+        category: 'Районы',
+        desc: 'Тихий пригород с частными домами и коттеджами. Доступные цены, хорошая экология, рядом лесополосы и выезд на трассу.',
+        rating: 6, quality: 60, crime: 18, noise: 25, liquidity: 55,
+        schools: 3, kindergartens: 4, stops: 8, stadiums: 1,
+        photo: '',
+        video: '',
+        coords: [44.9950, 39.0800]
+    },
+    {
+        id: 'eyskoe-shosse',
+        name: 'Ейское шоссе',
+        category: 'Районы',
+        desc: 'Трасса в сторону Ейска с придорожной инфраструктурой. Посёлки, дачи, заправки и кафе. Перспективное направление для коммерческой недвижимости.',
+        rating: 5, quality: 48, crime: 22, noise: 75, liquidity: 50,
+        schools: 3, kindergartens: 3, stops: 15, stadiums: 0,
+        photo: '',
+        video: '',
+        coords: [45.0150, 38.8700]
+    },
+    {
+        id: 'berezovy',
+        name: 'Посёлок Берёзовый',
+        category: 'Районы',
+        desc: 'Уютный пригород в окружении зелени. Преимущественно частный сектор, хорошая экология, рядом лес. Для спокойной семейной жизни.',
+        rating: 7, quality: 72, crime: 10, noise: 15, liquidity: 58,
+        schools: 2, kindergartens: 3, stops: 6, stadiums: 0,
+        photo: '',
+        video: '',
+        coords: [44.9700, 39.0200]
+    },
+    {
+        id: 'nemetskaya-derevnya',
+        name: 'Немецкая деревня',
+        category: 'Районы',
+        desc: 'Элитный малоэтажный микрорайон. Аккуратные таунхаусы, закрытые дворы, высокий уровень комфорта. Престижное место с европейским обликом.',
+        rating: 9, quality: 90, crime: 5, noise: 20, liquidity: 92,
+        schools: 2, kindergartens: 3, stops: 7, stadiums: 1,
+        photo: '',
+        video: '',
+        coords: [45.0500, 38.9600]
+    },
+    {
+        id: 'elizavetinskaya',
+        name: 'Станица Елизаветинская',
+        category: 'Районы',
+        desc: 'Крупная зелёная станица с частным сектором. Своя школа, детсады, магазины. Популярна у тех, кто хочет свой дом с участком недалеко от города.',
+        rating: 7, quality: 70, crime: 12, noise: 20, liquidity: 65,
+        schools: 4, kindergartens: 5, stops: 10, stadiums: 1,
+        photo: '',
+        video: '',
+        coords: [45.0450, 38.8000]
+    },
+
+    // ========== СТАНИЦЫ ==========
+    {
+        id: 'novotitorovskaya',
+        name: 'Станица Новотиторовская',
+        category: 'Станицы',
+        desc: 'Крупная станица с развитой инфраструктурой. Школы, детсады, больница, Дом культуры. Хорошая транспортная связь с Краснодаром.',
+        rating: 6, quality: 62, crime: 15, noise: 18, liquidity: 55,
+        schools: 4, kindergartens: 5, stops: 10, stadiums: 1,
+        photo: '',
+        video: '',
+        coords: [45.2200, 38.9800]
+    },
+    {
+        id: 'krasnoselskaya',
+        name: 'Станица Красносельская',
+        category: 'Станицы',
+        desc: 'Небольшая уютная станица в пригороде. Частные дома с участками, тишина, чистый воздух. Идеально для дачи или постоянного проживания.',
+        rating: 5, quality: 55, crime: 12, noise: 12, liquidity: 45,
+        schools: 2, kindergartens: 2, stops: 5, stadiums: 0,
+        photo: '',
+        video: '',
+        coords: [45.1800, 39.0500]
+    },
+    {
+        id: 'staromyshavtovskaya',
+        name: 'Станица Старомышастовская',
+        category: 'Станицы',
+        desc: 'Станица с богатой историей и казачьими традициями. Развито сельское хозяйство, дружелюбное сообщество. Доступные цены на дома.',
+        rating: 5, quality: 52, crime: 14, noise: 10, liquidity: 40,
+        schools: 3, kindergartens: 3, stops: 7, stadiums: 1,
+        photo: '',
+        video: '',
+        coords: [45.2900, 38.9500]
+    },
+    {
+        id: 'novovelichkovskaya',
+        name: 'Станица Нововеличковская',
+        category: 'Станицы',
+        desc: 'Крупный сельский населённый пункт с хорошей инфраструктурой. Рынок, магазины, школа, амбулатория. Популярна у переселенцев.',
+        rating: 6, quality: 60, crime: 13, noise: 15, liquidity: 50,
+        schools: 4, kindergartens: 4, stops: 9, stadiums: 1,
+        photo: '',
+        video: '',
+        coords: [45.3200, 38.8800]
+    },
+    {
+        id: 'novomyshastovskaya',
+        name: 'Станица Новомышастовская',
+        category: 'Станицы',
+        desc: 'Тихая станица с преимущественно частной застройкой. Рисовые чеки, рыбалка, природа. Для тех, кто ценит размеренный уклад жизни.',
+        rating: 5, quality: 50, crime: 16, noise: 10, liquidity: 38,
+        schools: 2, kindergartens: 2, stops: 5, stadiums: 0,
+        photo: '',
+        video: '',
+        coords: [45.2500, 38.8000]
+    },
+    {
+        id: 'marinskaya',
+        name: 'Станица Марьинская',
+        category: 'Станицы',
+        desc: 'Удалённая станица с живописными окрестностями. Минимум суеты, максимум природы. Дешёвая земля, подходит для фермерства.',
+        rating: 4, quality: 45, crime: 18, noise: 8, liquidity: 30,
+        schools: 1, kindergartens: 2, stops: 4, stadiums: 0,
+        photo: '',
+        video: '',
+        coords: [45.1000, 38.7500]
+    }
+    // СЮДА БУДЕТЕ ДОБАВЛЯТЬ НОВЫЕ СТАНИЦЫ
+];
+
+        
+
+        // ====== РЕНДЕР КАРТОЧЕК С ГРУППИРОВКОЙ ======
+function renderCards() {
+    const grid = document.getElementById('districtsGrid');
+    
+    // Получаем уникальные категории в порядке появления
+    const categories = [...new Set(districts.map(d => d.category))];
+    
+    let html = '';
+    
+    categories.forEach(cat => {
+        // Заголовок-разделитель
+        html += `
+            <div class="category-divider" style="grid-column: 1 / -1;">
+                <div class="divider-line"></div>
+                <span class="divider-title">${cat}</span>
+                <div class="divider-line"></div>
+            </div>`;
+        
+        // Карточки этой категории
+        const catDistricts = districts.filter(d => d.category === cat);
+        catDistricts.forEach((d, i) => {
+            const globalIndex = districts.indexOf(d);
+            html += `
+                <div class="district-card" id="card-${d.id}" style="animation-delay:${globalIndex * 0.04}s" onclick="openModal('${d.id}')">
+                    <div class="district-photo">
+                        ${d.photo ? `<img src="${d.photo}" alt="${d.name}">` :
+                        `<div class="photo-placeholder"><div class="photo-placeholder-icon">🖼️</div><span>Фото района</span></div>`}
+                    </div>
+                    <div class="district-body">
+                        <div class="district-name">${d.name}</div>
+                        <div class="district-stats">
+                            <span class="stat-badge">⭐ ${d.rating}/10</span>
+                            <span class="stat-badge">🏠 ${d.liquidity}% ликв.</span>
+                            <span class="stat-badge">📊 ${d.quality}% качество</span>
+                        </div>
+                    </div>
+                </div>`;
+        });
+    });
+    
+    grid.innerHTML = html;
+}
+
+        // ====== МОДАЛЬНОЕ ОКНО ======
+        function openModal(id) {
+            const d = districts.find(x => x.id === id);
+            if (!d) return;
+            const modal = document.getElementById('modalContent');
+            modal.innerHTML = `
+                <span class="modal-close" onclick="closeModalDirect()">✕</span>
+                <div class="modal-photo">
+                    ${d.photo ? `<img src="${d.photo}" alt="${d.name}">` :
+                    `<div class="photo-placeholder"><div class="photo-placeholder-icon">🖼️</div><span>Фото района</span></div>`}
+                </div>
+                <div class="modal-title">${d.name}</div>
+                <div class="modal-rating">
+                    <span class="rating-number">${d.rating}/10</span>
+                    <span class="rating-stars">${'★'.repeat(Math.round(d.rating/2))}${'☆'.repeat(5-Math.round(d.rating/2))}</span>
+                </div>
+                <p class="modal-desc">${d.desc}</p>
+                <div class="metric-grid">
+                    <div class="metric"><div class="metric-label">Качество жизни</div><div class="metric-value">${d.quality}%</div><div class="metric-bar"><div class="metric-fill" style="width:${d.quality}%;background:var(--green)"></div></div></div>
+                    <div class="metric"><div class="metric-label">Преступность</div><div class="metric-value">${d.crime}%</div><div class="metric-bar"><div class="metric-fill" style="width:${d.crime}%;background:var(--red)"></div></div></div>
+                    <div class="metric"><div class="metric-label">Шум / Тишина</div><div class="metric-value">${d.noise}%</div><div class="metric-bar"><div class="metric-fill" style="width:${d.noise}%;background:var(--orange)"></div></div></div>
+                    <div class="metric"><div class="metric-label">Ликвидность</div><div class="metric-value">${d.liquidity}%</div><div class="metric-bar"><div class="metric-fill" style="width:${d.liquidity}%;background:var(--gold)"></div></div></div>
+                </div>
+                <h4 style="margin-bottom:8px;color:var(--text-light);">🏗️ Инфраструктура</h4>
+                <div class="infra-grid">
+                    <div class="infra-item"><div class="infra-icon">🏫</div><div class="infra-value">${d.schools}</div><div class="infra-label">Школы</div></div>
+                    <div class="infra-item"><div class="infra-icon">🧸</div><div class="infra-value">${d.kindergartens}</div><div class="infra-label">Садики</div></div>
+                    <div class="infra-item"><div class="infra-icon">🚏</div><div class="infra-value">${d.stops}</div><div class="infra-label">Остановки</div></div>
+                    <div class="infra-item"><div class="infra-icon">🏟️</div><div class="infra-value">${d.stadiums}</div><div class="infra-label">Стадионы</div></div>
+                </div>
+            `;
+            document.getElementById('modalOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeModal(e) { if (e.target === document.getElementById('modalOverlay')) closeModalDirect(); }
+        function closeModalDirect() {
+            document.getElementById('modalOverlay').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModalDirect(); });
+
+                // ====== ЯНДЕКС.КАРТА ======
+        function initYandexMap() {
+            const script = document.createElement('script');
+            script.src = 'https://api-maps.yandex.ru/2.1/?lang=ru_RU&apikey=' + YANDEX_API_KEY;
+            script.type = 'text/javascript';
+            document.head.appendChild(script);
+
+            script.onload = function() {
+                ymaps.ready(function() {
+                    const map = new ymaps.Map('yandexMap', {
+                        center: [45.035470, 38.975313],
+                        zoom: 12,
+                        controls: ['zoomControl', 'fullscreenControl'],
+                        type: 'yandex#map'
+                    }, {
+                        suppressMapOpenBlock: true,
+                        restrictMapArea: false
+                    });
+
+                  
+
+                    window.districtMap = map;
+                });
+            };
+
+            script.onerror = function() {
+                document.getElementById('yandexMap').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#666;font-size:0.9rem;">⚠️ Ошибка загрузки карты. Проверьте интернет.</div>';
+            };
+        }
+        // ====== ИНИЦИАЛИЗАЦИЯ ======
+        renderCards();
+        initYandexMap();
+    </script>
+</body>
+</html>
